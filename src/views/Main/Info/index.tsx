@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const MyInfo = () => {
   return (
-    <div>
+    <section>
       <div className="flex">
         <div className="text-accent">안녕하세요.</div>
         <Image
@@ -13,7 +13,7 @@ const MyInfo = () => {
           width={120}
         />
       </div>
-    </div>
+    </section>
   );
 };
 

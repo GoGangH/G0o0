@@ -1,9 +1,11 @@
+import GitHubInfo from "./Github";
 import MyInfo from "./Info";
 
 const MainView = () => {
   return (
-    <div className="min-h-screen">
+    <div className="w-full">
       <MyInfo />
+      <GitHubInfo />
     </div>
   );
 };

@@ -5,23 +5,23 @@ export interface SkillCategory {
 
 export const skills: SkillCategory[] = [
   {
-    category: "Language",
-    items: ["Java", "Python", "JavaScript", "TypeScript"],
+    category: "Backend",
+    items: ["Python", "FastAPI", "TypeScript", "Node.js", "NestJS", "REST API", "BullMQ"],
+  },
+  {
+    category: "Data",
+    items: ["PostgreSQL", "MongoDB", "Redis", "SQLAlchemy", "Alembic"],
   },
   {
     category: "Frontend",
-    items: ["Next.js", "React Native", "Telegram Miniapp"],
+    items: ["Next.js", "React", "React Native", "Telegram Mini App"],
   },
   {
-    category: "Backend",
-    items: ["Nest.js", "Spring", "FastAPI"],
+    category: "Infrastructure",
+    items: ["AWS EC2", "AWS S3", "AWS Lambda", "Docker", "Docker Compose", "GitHub Actions", "Caddy", "Sentry"],
   },
   {
-    category: "Database",
-    items: ["MongoDB", "MariaDB", "Redis"],
-  },
-  {
-    category: "DevOps",
-    items: ["Docker", "PM2", "AWS EC2", "AWS S3", "AWS Lambda"],
+    category: "Testing",
+    items: ["pytest", "pytest-asyncio", "FastAPI TestClient"],
   },
 ];

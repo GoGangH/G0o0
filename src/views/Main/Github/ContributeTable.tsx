@@ -16,7 +16,7 @@ const ContributeTable = () => {
     try {
       const data = await fetchGitHubContributions(userName);
       setContributions(data);
-    } catch (err) {
+    } catch {
       setError("Failed to fetch contributions");
     } finally {
       setLoading(false);
@@ -35,6 +35,7 @@ const ContributeTable = () => {
           <AutorenewIcon fontSize="small" />
         </button>
       </div>
+      {error && <div className="text-sm text-red-400">{error}</div>}
       <div className="max-w-fit flex gap-1 overflow-y-visible py-8">
         {contributions &&
           contributions.weeks.map((week, weekIndex) => (

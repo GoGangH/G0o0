@@ -1,0 +1,1141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>고강현 | ABLY Backend Engineer</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 11mm 13mm 12mm;
+      @bottom-right {
+        content: counter(page) " / " counter(pages);
+        color: #8a919e;
+        font-size: 8.5pt;
+      }
+    }
+
+    :root {
+      --ink: #17191d;
+      --muted: #626a78;
+      --light: #f3f5f7;
+      --line: #dce1e7;
+      --accent: #1769e0;
+      --accent-soft: #eaf2ff;
+      --navy: #14233b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-family: "Apple SD Gothic Neo", "Noto Sans CJK KR", sans-serif;
+      color: var(--ink);
+      font-size: 9.2pt;
+      line-height: 1.43;
+      word-break: keep-all;
+    }
+
+    body {
+      margin: 0;
+      background: #fff;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      min-height: 274mm;
+      position: relative;
+    }
+
+    .page + .page {
+      break-before: auto;
+    }
+
+    header {
+      border-top: 5px solid var(--accent);
+      padding-top: 8mm;
+      margin-bottom: 5mm;
+    }
+
+    .header-grid {
+      display: grid;
+      grid-template-columns: 24mm 1fr auto;
+      gap: 6mm;
+      align-items: center;
+    }
+
+    .profile-photo {
+      width: 24mm;
+      height: 30mm;
+      object-fit: cover;
+      border-radius: 1.5mm;
+      filter: saturate(0.88);
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 25pt;
+      line-height: 1.05;
+      letter-spacing: -0.8px;
+    }
+
+    .role {
+      margin-top: 3mm;
+      color: var(--accent);
+      font-size: 11.5pt;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .contact {
+      color: var(--muted);
+      font-size: 8.5pt;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .contact-line {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 1.5mm;
+      margin-bottom: 1mm;
+    }
+
+    .contact-line svg {
+      width: 3.4mm;
+      height: 3.4mm;
+      color: var(--navy);
+      flex: 0 0 auto;
+    }
+
+    .contact a {
+      display: inline-flex;
+      color: var(--navy);
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: flex-end;
+      gap: 2.8mm;
+      margin-top: 1.5mm;
+    }
+
+    .social-links svg {
+      width: 4.6mm;
+      height: 4.6mm;
+    }
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 3mm;
+      margin: 0 0 2.5mm;
+      color: var(--navy);
+      font-size: 13.5pt;
+      line-height: 1.2;
+      letter-spacing: -0.25px;
+    }
+
+    h2::after {
+      content: "";
+      height: 1px;
+      background: var(--line);
+      flex: 1;
+    }
+
+    h3 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 10.5pt;
+      line-height: 1.35;
+    }
+
+    h4 {
+      margin: 0 0 1.5mm;
+      color: var(--ink);
+      font-size: 10.2pt;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    section {
+      margin-bottom: 6mm;
+    }
+
+    ul {
+      margin: 1.3mm 0 0;
+      padding-left: 5mm;
+    }
+
+    li {
+      margin: 0 0 1mm;
+      padding-left: 1mm;
+    }
+
+    li::marker {
+      color: var(--accent);
+    }
+
+    .lead {
+      max-width: 172mm;
+      color: #303642;
+      font-size: 9.8pt;
+      line-height: 1.57;
+    }
+
+    .lead strong {
+      color: var(--navy);
+    }
+
+    .skills {
+      display: grid;
+      grid-template-columns: 29mm 1fr;
+      border-top: 1px solid var(--line);
+    }
+
+    .skill-label,
+    .skill-value {
+      padding: 1.6mm 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .skill-label {
+      color: var(--navy);
+      font-weight: 700;
+    }
+
+    .skill-value {
+      color: #39404b;
+    }
+
+    .career-row {
+      display: grid;
+      grid-template-columns: 34mm 1fr;
+      gap: 6mm;
+      padding: 4mm 0;
+      border-bottom: 1px solid var(--line);
+      break-inside: avoid;
+    }
+
+    .date {
+      color: var(--muted);
+      font-size: 9pt;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .career-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 5mm;
+      align-items: baseline;
+    }
+
+    .career-meta {
+      display: flex;
+      gap: 5mm;
+      margin-top: 1.4mm;
+      color: var(--muted);
+      font-size: 8.5pt;
+    }
+
+    .career-meta > span + span {
+      padding-left: 5mm;
+      border-left: 1px solid var(--line);
+    }
+
+    .career-meta .label {
+      margin-right: 1.5mm;
+      color: #8a919e;
+      font-size: 7.7pt;
+      font-weight: 500;
+    }
+
+    .career-desc {
+      margin-top: 2mm;
+      color: #414854;
+      font-size: 8.9pt;
+      line-height: 1.5;
+    }
+
+    .career-points {
+      margin-top: 2mm;
+      padding-left: 4.5mm;
+      color: #414854;
+    }
+
+    .career-points li {
+      margin-bottom: 1.2mm;
+      font-size: 8.8pt;
+      line-height: 1.48;
+    }
+
+    .activity-section .career-row {
+      padding: 2.8mm 0;
+    }
+
+    .overview-page .career-row {
+      padding: 1.4mm 0;
+    }
+
+    .overview-page section {
+      margin-bottom: 3.5mm;
+    }
+
+    .overview-page .career-desc {
+      margin-top: 0.8mm;
+      font-size: 8.6pt;
+      line-height: 1.38;
+    }
+
+    .overview-page header {
+      padding-top: 5mm;
+      margin-bottom: 3mm;
+    }
+
+    .overview-page .profile-photo {
+      height: 27mm;
+    }
+
+    .overview-page .lead {
+      font-size: 9.5pt;
+      line-height: 1.48;
+    }
+
+    .overview-page .skill-label,
+    .overview-page .skill-value {
+      padding: 1.2mm 0;
+    }
+
+    .closing-page .case {
+      margin-bottom: 3mm;
+    }
+
+    .closing-page section {
+      margin-bottom: 4mm;
+    }
+
+    .closing-page .activity-section .career-row {
+      padding: 2.2mm 0;
+    }
+
+    .closing-page .education-row {
+      padding: 1.2mm 0;
+    }
+
+    .detail-experience {
+      margin-bottom: 7mm;
+      padding-bottom: 4mm;
+      border-bottom: 2px solid var(--navy);
+    }
+
+    .detail-experience .career-meta {
+      margin-bottom: 2mm;
+    }
+
+    .company-section {
+      margin-bottom: 8mm;
+    }
+
+    .company-heading {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8mm;
+      align-items: end;
+      margin-bottom: 4mm;
+      padding-bottom: 2.5mm;
+      border-bottom: 2px solid var(--navy);
+      break-after: avoid;
+    }
+
+    .company-heading h2 {
+      display: block;
+      margin: 0 0 1mm;
+      font-size: 16pt;
+    }
+
+    .company-heading h2::after {
+      display: none;
+    }
+
+    .company-heading .description,
+    .company-heading .period {
+      color: var(--muted);
+      font-size: 8.7pt;
+    }
+
+    .company-heading .period {
+      text-align: right;
+    }
+
+    .experience-item {
+      margin-bottom: 6mm;
+      padding-bottom: 5mm;
+      border-bottom: 1px solid var(--line);
+      break-inside: avoid;
+    }
+
+    .project-overview {
+      display: grid;
+      grid-template-columns: 24mm 1fr;
+      row-gap: 1.5mm;
+      margin: 0 0 5mm;
+      padding: 3mm 0;
+      border-bottom: 1px solid var(--line);
+      break-inside: avoid;
+    }
+
+    .project-overview dt {
+      color: var(--muted);
+      font-size: 8.2pt;
+      font-weight: 700;
+    }
+
+    .project-overview dd {
+      margin: 0;
+      color: #343b46;
+      font-size: 8.9pt;
+      line-height: 1.5;
+    }
+
+    .project-overview .project-description {
+      grid-column: 1 / -1;
+      margin-bottom: 1mm;
+      color: #343b46;
+      font-size: 8.9pt;
+      line-height: 1.5;
+    }
+
+    .experience-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .experience-title {
+      margin-bottom: 2.5mm;
+      font-size: 11.5pt;
+    }
+
+    .detail-list {
+      display: grid;
+      grid-template-columns: 24mm 1fr;
+      row-gap: 1.8mm;
+      margin: 0;
+    }
+
+    .detail-list dt {
+      color: var(--muted);
+      font-size: 8.2pt;
+      font-weight: 700;
+    }
+
+    .detail-list dd {
+      margin: 0;
+      color: #343b46;
+      font-size: 8.9pt;
+      line-height: 1.52;
+    }
+
+    .detail-list .result {
+      color: #1655ad;
+      font-weight: 700;
+    }
+
+    .education-section {
+      break-inside: avoid;
+      break-before: auto;
+    }
+
+    .project-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8mm;
+      align-items: start;
+      margin-bottom: 2mm;
+      padding-bottom: 2mm;
+      border-bottom: 2px solid var(--navy);
+    }
+
+    .project-header h2 {
+      display: block;
+      margin-bottom: 1.5mm;
+      font-size: 15.5pt;
+    }
+
+    .project-header h2::after {
+      display: none;
+    }
+
+    .project-subtitle {
+      color: var(--muted);
+      font-size: 8.7pt;
+    }
+
+    .project-meta {
+      color: var(--muted);
+      font-size: 8.4pt;
+      line-height: 1.5;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .summary-box {
+      margin: 3mm 0 4mm;
+      padding: 2mm 0 2mm 3.5mm;
+      border-left: 3px solid var(--accent);
+      color: #27364e;
+    }
+
+    .summary-box strong {
+      color: #0e4fa9;
+    }
+
+    .case {
+      margin-bottom: 4mm;
+      break-inside: avoid;
+    }
+
+    .case-title {
+      display: flex;
+      align-items: baseline;
+      gap: 2.5mm;
+      margin-bottom: 1.3mm;
+    }
+
+    .case-badge {
+      display: inline-block;
+      padding-right: 2.5mm;
+      border-right: 2px solid var(--accent);
+      color: var(--accent);
+      font-size: 8pt;
+      font-weight: 700;
+    }
+
+    .case p {
+      color: #3e4550;
+      font-size: 8.8pt;
+    }
+
+    .change {
+      display: grid;
+      grid-template-columns: 1fr 9mm 1fr;
+      gap: 2mm;
+      align-items: center;
+      margin-top: 2mm;
+      padding: 2.2mm 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .change > div {
+      padding: 0 2mm;
+      font-size: 8.2pt;
+      line-height: 1.38;
+    }
+
+    .before {
+      color: #656d78;
+    }
+
+    .after {
+      color: #174f9e;
+      font-weight: 600;
+    }
+
+    .flow-arrow {
+      color: var(--accent);
+      font-size: 17pt;
+      line-height: 1;
+      text-align: center;
+    }
+
+    .change-label {
+      display: block;
+      margin-bottom: 1mm;
+      font-size: 8pt;
+      font-weight: 800;
+    }
+
+    .admin-callout {
+      margin-top: 3mm;
+      padding: 2.5mm 0 2.5mm 3.5mm;
+      border-left: 3px solid var(--accent);
+      break-inside: avoid;
+    }
+
+    .admin-callout h4 {
+      color: #174f9e;
+    }
+
+    .admin-callout p {
+      color: #35455e;
+      font-size: 8.7pt;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5mm;
+    }
+
+    .subsection-title {
+      margin: 4mm 0 1.5mm;
+      color: var(--navy);
+      font-size: 11pt;
+    }
+
+    .compact-card {
+      padding: 2.5mm 0 3mm;
+      border-bottom: 1px solid var(--line);
+      break-inside: avoid;
+    }
+
+    .compact-card + .compact-card {
+      margin-top: 3mm;
+    }
+
+    .compact-card .meta {
+      margin: 0.7mm 0 1.3mm;
+      color: var(--muted);
+      font-size: 8.8pt;
+    }
+
+    .compact-card p,
+    .compact-card li {
+      color: #414854;
+      font-size: 8.5pt;
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 0 1.2mm 1.2mm 0;
+      padding: 0.5mm 1.8mm;
+      border-radius: 10mm;
+      background: var(--light);
+      color: #4b5461;
+      font-size: 7.8pt;
+      font-weight: 600;
+    }
+
+    .education-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8mm;
+      padding: 2mm 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 8.8pt;
+    }
+
+    .footer-note {
+      position: absolute;
+      bottom: 2mm;
+      left: 0;
+      color: #9299a4;
+      font-size: 8pt;
+    }
+  </style>
+</head>
+<body>
+  <article class="page overview-page">
+    <header>
+      <div class="header-grid">
+        <img class="profile-photo" src="assets/profile.png" alt="고강현 프로필 사진">
+        <div>
+          <h1>고강현</h1>
+          <div class="role">Backend Developer</div>
+        </div>
+        <div class="contact">
+          <div class="contact-line">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M6.6 2.8h2.8l1.4 4.4-2 1.5a16 16 0 0 0 6.5 6.5l1.5-2 4.4 1.4v2.8c0 1-.8 1.8-1.8 1.8C11.3 19.2 4.8 12.7 4.8 4.6c0-1 .8-1.8 1.8-1.8Z"/>
+            </svg>
+            <span>010-3754-9499</span>
+          </div>
+          <div class="contact-line">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M3 5h18v14H3V5Zm2 2v.4l7 5.1 7-5.1V7H5Zm14 10V9.9l-7 5.1-7-5.1V17h14Z"/>
+            </svg>
+            <span>rhrkdgus1020@naver.com</span>
+          </div>
+          <div class="contact-line">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/>
+            </svg>
+            <span>경기도 남양주시 다산동</span>
+          </div>
+          <div class="social-links">
+            <a href="https://github.com/GoGangH" aria-label="GitHub" title="GitHub">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M12 .7a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2.23c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.78 1.2 1.78 1.2 1.04 1.77 2.72 1.26 3.38.96.1-.75.4-1.26.74-1.55-2.57-.29-5.27-1.29-5.27-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.47.11-3.05 0 0 .97-.31 3.16 1.18A10.9 10.9 0 0 1 12 6.11c.98 0 1.95.13 2.87.39 2.2-1.49 3.16-1.18 3.16-1.18.63 1.58.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.71 5.39-5.29 5.68.42.36.79 1.07.79 2.16v3.25c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .7Z"/>
+              </svg>
+            </a>
+            <a href="https://www.linkedin.com/in/kanghyun-ko-271a57230/" aria-label="LinkedIn" title="LinkedIn">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V8.98h3.42v1.57h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.29ZM5.32 7.41a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12Zm1.78 13.04H3.54V8.98H7.1v11.47Z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section>
+      <h2>소개</h2>
+      <p class="lead">
+        <strong>앞으로 나아가며 성장하는 백엔드 개발자, Go 강현입니다.</strong>
+        기능을 구현하는 데서 끝나지 않고 어떤 사용자와 비즈니스 문제를 해결하는지 확인하며 개발하는 것을 중요하게 생각합니다.
+        초기 스타트업의 Founding Team으로 제품 기획부터 출시와 운영까지 참여했고, 누적 사용자 40만 명 규모의 서비스에서 DB 부하와 데이터 정합성 문제를 직접 해결했습니다.
+        운영 과정에서는 기획·디자인·마케팅 담당자와 문제를 정의하고, 반복 업무를 백오피스로 전환해 비개발자가 직접 서비스를 운영할 수 있도록 만들었습니다.
+        Python과 TypeScript를 모두 활용하며 서비스 규모와 팀 상황에 맞는 기술을 선택하고, 변경이 실제 사용자 경험과 운영 효율에 어떤 영향을 주는지 끝까지 확인하는 개발자로 성장하고 있습니다.
+      </p>
+    </section>
+
+    <section>
+      <h2>기술</h2>
+      <div class="skills">
+        <div class="skill-label">Backend</div>
+        <div class="skill-value">Python, FastAPI, TypeScript, Node.js, NestJS, REST API, BullMQ</div>
+        <div class="skill-label">Data</div>
+        <div class="skill-value">PostgreSQL, MongoDB, Redis, SQLAlchemy, Alembic</div>
+        <div class="skill-label">Frontend</div>
+        <div class="skill-value">Next.js, React</div>
+        <div class="skill-label">Infrastructure</div>
+        <div class="skill-value">AWS EC2·S3·Lambda, Docker, Docker Compose, GitHub Actions, Caddy, Sentry</div>
+        <div class="skill-label">Testing</div>
+        <div class="skill-value">pytest, pytest-asyncio, FastAPI TestClient</div>
+      </div>
+    </section>
+
+    <section class="education-section">
+      <h2>학력 및 수상</h2>
+      <div class="education-row">
+        <div>
+          <h3>국민대학교 소프트웨어학과</h3>
+          <div class="small">특기자 전형</div>
+        </div>
+        <div class="date">2019 – 2026.02 · 졸업</div>
+      </div>
+      <div class="education-row">
+        <div>
+          <h3>ICT 창의성 대회</h3>
+          <div class="small">은상</div>
+        </div>
+        <div class="date">2018.08</div>
+      </div>
+      <div class="education-row">
+        <div>
+          <h3>국민대학교 알고리즘 대회</h3>
+          <div class="small">장려상</div>
+        </div>
+        <div class="date">2018.08</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>경력</h2>
+      <div class="career-row">
+        <div class="date">2025.07 – 2025.09</div>
+        <div>
+          <div class="career-title"><h3>Grapic</h3></div>
+          <div class="career-meta">
+            <span><span class="label">근무 형태</span>파트타임</span>
+            <span><span class="label">직무</span>풀스택 개발자</span>
+          </div>
+          <p class="career-desc">커뮤니티 데이터 수집 서버, 외부 콘텐츠 포스팅 연동과 정산·회원 권한·포스팅 관리 어드민 개발</p>
+        </div>
+      </div>
+      <div class="career-row">
+        <div class="date">2025.02 – 2025.07</div>
+        <div>
+          <div class="career-title"><h3>Hashscape</h3></div>
+          <div class="career-meta">
+            <span><span class="label">근무 형태</span>계약직</span>
+            <span><span class="label">직무</span>풀스택 개발자</span>
+          </div>
+          <p class="career-desc">React Native 기반 Solthumb 멀티체인 거래 서비스의 백엔드 아키텍처, 거래·자산 API와 앱 화면 개발</p>
+        </div>
+      </div>
+      <div class="career-row">
+        <div class="date">2024.07 – 2025.02</div>
+        <div>
+          <div class="career-title"><h3>Hashscape</h3></div>
+          <div class="career-meta">
+            <span><span class="label">근무 형태</span>정규직</span>
+            <span><span class="label">직무</span>Founding Team · 풀스택 개발자</span>
+          </div>
+          <p class="career-desc">Salt Hub Telegram 미니앱의 기획·설계부터 프론트엔드·백엔드 개발과 운영까지 참여해 사용자 40만 명 이상 확보</p>
+        </div>
+      </div>
+      <div class="career-row">
+        <div class="date">2023.07 – 2024.06</div>
+        <div>
+          <div class="career-title"><h3>뉴웹커뮤니케이션</h3></div>
+          <div class="career-meta">
+            <span><span class="label">근무 형태</span>프리랜서</span>
+            <span><span class="label">직무</span>자동화·웹 서버 개발자</span>
+          </div>
+          <p class="career-desc">콘텐츠 분석·생성·게시 과정을 연결한 마케팅 자동화 시스템과 변호사 플랫폼 MVP 개발</p>
+        </div>
+      </div>
+      <div class="career-row">
+        <div class="date">2023.03 – 2023.06</div>
+        <div>
+          <div class="career-title"><h3>Inspien</h3></div>
+          <div class="career-meta">
+            <span><span class="label">근무 형태</span>인턴</span>
+            <span><span class="label">직무</span>백엔드 개발자</span>
+          </div>
+          <p class="career-desc">분산된 B2B 서비스와 DB 통합, 내부 관리 시스템 및 사용자 메일 발송 기능 개발</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="activity-section">
+      <h2>경력 외 활동</h2>
+      <div class="career-row">
+        <div class="date">2026.01 – 2026.03</div>
+        <div>
+          <div class="career-title"><h3>Nexters · Logit</h3></div>
+          <div class="career-meta">
+            <span><span class="label">활동 형태</span>IT 연합 동아리</span>
+            <span><span class="label">직무</span>BE 리드 · 서버 개발자</span>
+          </div>
+          <p class="career-desc">Python·FastAPI 기반 서비스의 비동기 API, PostgreSQL·Redis 연동, 테스트와 팀 운영 어드민 개발</p>
+        </div>
+      </div>
+      <div class="career-row">
+        <div class="date">2022.06 – 2022.12</div>
+        <div>
+          <div class="career-title"><h3>소프트웨어 마에스트로 13기</h3></div>
+          <div class="career-meta">
+            <span><span class="label">활동 형태</span>연수생</span>
+            <span><span class="label">직무</span>팀장 · 서버/AI 개발자</span>
+          </div>
+          <p class="career-desc">NLP 기반 음악 자동 태깅 모델과 음악 태그 정보를 탐색·활용하는 애플리케이션 개발</p>
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <article class="page">
+    <section class="company-section">
+      <div class="company-heading">
+        <div>
+          <h2>Grapic</h2>
+          <div class="description">파트타임 · 풀스택 개발자</div>
+        </div>
+        <div class="period">2025.07 – 2025.09</div>
+      </div>
+
+      <div class="experience-item">
+        <h3 class="experience-title">커뮤니티 콘텐츠 수집·포스팅 자동화</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>TypeScript, Node.js, Docker</dd>
+          <dt>본인의 역할</dt>
+          <dd>콘텐츠 수집 서버 개발</dd>
+          <dt>문제 정의</dt>
+          <dd>운영자가 여러 커뮤니티를 순회하며 콘텐츠를 찾고 이미지·본문을 서비스에 다시 입력해, 포스팅 한 건을 등록할 때마다 동일한 수작업이 반복됐습니다.</dd>
+          <dt>실행</dt>
+          <dd>커뮤니티별 페이지 구조를 분석해 제목·본문·이미지를 추출하는 수집 서버를 만들었습니다. 운영자가 URL만 입력하면 수집 결과를 기존 서비스의 포스팅 형식으로 변환해 등록하도록 API를 연동하고 Docker로 배포했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">운영 입력을 URL 1개로 줄이고, 콘텐츠 수집과 서비스 등록을 하나의 흐름으로 연결했습니다.</dd>
+        </dl>
+      </div>
+
+      <div class="experience-item">
+        <h3 class="experience-title">정산·회원·포스팅 운영 어드민 개발</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>TypeScript, Node.js, React</dd>
+          <dt>본인의 역할</dt>
+          <dd>운영 어드민 풀스택 개발</dd>
+          <dt>문제 정의</dt>
+          <dd>정산 내역 확인, 회원 권한 변경과 포스팅 상태 수정이 DB 직접 작업에 의존해 운영 요청이 발생할 때마다 개발 업무가 중단됐습니다.</dd>
+          <dt>실행</dt>
+          <dd>업무별 조회·수정 범위를 구분한 관리 API를 만들고, 정산 조회와 회원 권한·포스팅 상태 변경을 운영자가 직접 수행하는 어드민 화면으로 연결했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">정산·회원 권한·포스팅 상태 등 3개 운영 영역을 개발자의 DB 직접 수정 없이 관리할 수 있게 했습니다.</dd>
+        </dl>
+      </div>
+    </section>
+
+    <section class="company-section">
+      <div class="company-heading">
+        <div>
+          <h2>Hashscape · Salt Hub</h2>
+          <div class="description">정규직 Founding Team · 풀스택 개발자</div>
+        </div>
+        <div class="period">2024.07 – 2025.02</div>
+      </div>
+
+      <dl class="project-overview">
+        <div class="project-description">메인 거래 서비스 출시 전 시장 반응과 초기 사용자를 확보하기 위해 만든 Telegram 미니앱입니다. 포인트 파밍, 퀘스트, 친구 초대, 흔들기 게임, 토큰 드롭 이벤트를 제공했습니다.</div>
+        <dt>담당 파트</dt>
+        <dd>Founding Team 풀스택 개발자로 인증·사용자·포인트·게임·초대·퀘스트·드롭 API와 웹 화면을 개발하고, 외부 협업 이벤트 조율과 운영 어드민 구축을 담당했습니다.</dd>
+        <dt>성과</dt>
+        <dd>누적 사용자 40만 명 이상과 MAU 2,000~3,000명을 기록해 시장 반응과 후속 서비스의 초기 사용자 기반을 검증했습니다.</dd>
+      </dl>
+
+      <div class="experience-item">
+        <h3 class="experience-title">Telegram 미니앱 제품 개발</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>TypeScript, NestJS, Next.js, MongoDB, Telegram Bot API, AWS</dd>
+          <dt>본인의 역할</dt>
+          <dd>미니앱 프론트엔드·백엔드 개발</dd>
+          <dt>문제 정의</dt>
+          <dd>후속 거래 서비스를 바로 개발하면 사용자 수요를 확인하지 못한 채 개발 비용을 투입할 위험이 있었고, 출시 시 활용할 초기 사용자 기반도 없었습니다.</dd>
+          <dt>실행</dt>
+          <dd>설치 없이 접근할 수 있는 Telegram 미니앱을 선택하고 인증·사용자·포인트·퀘스트·초대·게임 API와 웹 화면을 개발했습니다. 토큰 드롭과 협업 이벤트를 반복 운영할 수 있도록 참여 조건과 보상 흐름도 제품에 포함했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">누적 사용자 40만 명 이상과 MAU 2,000~3,000명을 기록해 후속 거래 서비스의 시장성과 초기 사용자 기반을 검증했습니다.</dd>
+        </dl>
+      </div>
+
+      <div class="experience-item">
+        <h3 class="experience-title">게임 점수 처리 부하 개선</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>NestJS, Redis, MongoDB</dd>
+          <dt>본인의 역할</dt>
+          <dd>게임 세션 및 점수 저장 로직 개발</dd>
+          <dt>문제 정의</dt>
+          <dd>사용자의 흔들기 입력마다 점수를 MongoDB에 저장하면 짧은 게임 한 번에도 다수의 쓰기가 발생해, 동시 사용자가 늘수록 DB 부하와 비용이 급격히 증가했습니다.</dd>
+          <dt>실행</dt>
+          <dd>게임 시작 시 사용자·IP·만료 시간을 포함한 세션을 발급하고 플레이 중 점수는 Redis에 임시 누적했습니다. 종료 요청에서 세션과 누적 점수를 검증한 뒤 최종 점수만 MongoDB에 한 번 저장했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">게임 중 반복되던 DB 쓰기를 게임 종료 시 1회로 줄여 MongoDB 사용량과 운영 비용을 낮췄습니다.</dd>
+        </dl>
+      </div>
+
+      <div class="experience-item">
+        <h3 class="experience-title">가입 직후 사용자 조회 오류 해결</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>NestJS, MongoDB Atlas</dd>
+          <dt>본인의 역할</dt>
+          <dd>사용자 가입·조회 API 개발</dd>
+          <dt>문제 정의</dt>
+          <dd>가입 API는 성공했지만 바로 이어진 사용자 조회에서 간헐적으로 데이터가 없다고 응답해 신규 사용자가 첫 화면에 진입하지 못했습니다.</dd>
+          <dt>실행</dt>
+          <dd>가입 쓰기 직후 다른 복제 노드에서 조회될 때 발생하는 지연을 원인으로 확인했습니다. 가입 데이터가 다수 노드에 반영된 것을 확인한 뒤 성공 응답을 반환하도록 해당 저장 작업에 `writeConcern: majority`를 적용했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">가입과 첫 사용자 조회 사이의 복제 지연을 제어해 신규 가입 흐름에서 발생하던 간헐적 조회 실패를 제거했습니다.</dd>
+        </dl>
+      </div>
+
+      <div class="experience-item">
+        <h3 class="experience-title">마케팅 지표 조회·리포트 기능 개발</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>TypeScript, NestJS, Next.js, MongoDB</dd>
+          <dt>본인의 역할</dt>
+          <dd>마케팅 데이터 어드민 개발</dd>
+          <dt>문제 정의</dt>
+          <dd>초대 성과, 가입자 수와 게임 이용량이 DB에만 있어 캠페인 성과를 확인할 때마다 개발자가 쿼리를 작성하고 파일을 전달해야 했습니다.</dd>
+          <dt>실행</dt>
+          <dd>마케팅 기준에 맞춰 사용자별 초대 인원, 전체 가입자 수와 게임 이용량을 집계하는 API를 만들고 어드민 대시보드에 연결했습니다. 조회 조건을 유지한 채 외부 공유용 PDF로 생성하는 기능도 추가했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">초대·가입·게임 이용 등 3개 핵심 마케팅 지표를 실시간 조회하고 PDF로 바로 공유할 수 있게 했습니다.</dd>
+        </dl>
+      </div>
+
+      <div class="experience-item">
+        <h3 class="experience-title">이벤트·배너·알림 운영 기능 개발</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>NestJS, Next.js, MongoDB</dd>
+          <dt>본인의 역할</dt>
+          <dd>서비스 운영 어드민 개발</dd>
+          <dt>문제 정의</dt>
+          <dd>협업 이벤트 일정이나 배너 문구가 바뀔 때마다 개발자가 DB를 수정하거나 재배포해야 해, 긴급 변경과 주말 운영이 개발자 대응 여부에 좌우됐습니다.</dd>
+          <dt>실행</dt>
+          <dd>이벤트와 배너의 내용·노출 기간·활성 상태를 데이터로 관리하도록 분리하고, 운영자가 수정 즉시 서비스에 반영할 수 있는 화면과 API를 개발했습니다. 사용자 알림도 대상과 내용을 입력해 직접 발송하도록 연결했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">이벤트·배너·알림 등 3개 운영 기능을 배포 없이 비개발자가 직접 변경할 수 있게 했습니다.</dd>
+        </dl>
+      </div>
+    </section>
+  </article>
+
+  <article class="page">
+    <section class="company-section">
+      <div class="company-heading">
+        <div>
+          <h2>Hashscape · Solthumb</h2>
+          <div class="description">계약직 · 풀스택 개발자</div>
+        </div>
+        <div class="period">2025.02 – 2025.07</div>
+      </div>
+
+      <dl class="project-overview">
+        <div class="project-description">한국 사용자가 Solana·Hedera·BSC·Ethereum의 밈 토큰을 거래하고 자산·거래 내역·추천 보상을 관리하는 멀티체인 서비스입니다. React Native로 iOS·Android·Web을 함께 제공했습니다.</div>
+        <dt>담당 파트</dt>
+        <dd>백엔드 전반과 아키텍처 의사결정을 주도하고 체인별 거래·송금·수신·보상 처리, 거래 이력·포지션·시세 서버, 푸시 알림과 React Native 화면 일부를 개발했습니다.</dd>
+        <dt>성과</dt>
+        <dd>Salt Hub의 사용자 성과와 Solthumb의 멀티체인 제품 로드맵을 바탕으로 Hedera 재단의 Solthumb 개발 그랜트 계약을 체결했습니다.</dd>
+      </dl>
+
+      <div class="experience-item">
+        <h3 class="experience-title">체인별 거래 데이터 분석·표준화</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>TypeScript, NestJS, MongoDB, BullMQ</dd>
+          <dt>본인의 역할</dt>
+          <dd>멀티체인 거래 데이터 파이프라인 개발</dd>
+          <dt>문제 정의</dt>
+          <dd>4개 네트워크가 서로 다른 거래 기록을 반환했고, 원본 데이터에는 매수·매도 여부와 실제 수량·수수료가 정리되어 있지 않아 사용자 거래 내역을 만들 수 없었습니다.</dd>
+          <dt>실행</dt>
+          <dd>각 체인의 거래 전후 자산 변화와 전송 기록을 분석해 매수·매도·송금·수신·보상 여부를 판별했습니다. 여기서 토큰 수량과 네트워크·서비스 수수료를 추출해 모든 체인이 함께 사용하는 거래 이력 형식으로 저장했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">Solana·Hedera·BSC·Ethereum 4개 네트워크의 거래를 하나의 이력 스키마와 API로 통합했습니다.</dd>
+        </dl>
+      </div>
+
+      <div class="experience-item">
+        <h3 class="experience-title">거래 데이터 파싱 작업 유실 방지</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>NestJS, Redis, BullMQ, MongoDB</dd>
+          <dt>본인의 역할</dt>
+          <dd>비동기 거래 처리 구조 설계·개발</dd>
+          <dt>문제 정의</dt>
+          <dd>거래는 네트워크에서 완료됐지만 외부 조회 지연이나 서버 종료로 후속 분석이 중단되면, 온체인에는 거래가 있고 서비스 DB에는 이력이 없는 불일치가 발생했습니다.</dd>
+          <dt>실행</dt>
+          <dd>거래 식별값과 사용자 정보를 BullMQ의 영속 작업으로 먼저 등록해 서버가 재시작돼도 처리 대상을 복구하도록 했습니다. 네트워크별 작업을 분리하고 조회 실패 시 최대 10회, 5초 간격으로 재시도했으며 최종 실패 작업도 별도로 남겼습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">서버 종료 후에도 작업을 재개하고 외부 데이터 지연에 최대 10회 대응해 온체인 거래의 오프체인 이력 누락 가능성을 낮췄습니다.</dd>
+        </dl>
+      </div>
+
+      <div class="experience-item">
+        <h3 class="experience-title">체인별 토큰 시세 수집 서버 개발</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>NestJS, Redis, BullMQ, MongoDB, GeckoTerminal·SaucerSwap API</dd>
+          <dt>본인의 역할</dt>
+          <dd>토큰 데이터 서버 설계·개발</dd>
+          <dt>문제 정의</dt>
+          <dd>네트워크마다 가격 제공처와 응답 형식이 달라 하나의 자산 화면에서 비교할 수 없었고, 여러 서버가 같은 수집 작업을 실행하면 외부 API 호출과 DB 갱신이 중복됐습니다.</dd>
+          <dt>실행</dt>
+          <dd>가격 수집 서버를 서비스 API와 분리하고 네트워크별 BullMQ 작업을 구성했습니다. Redis로 작업 실행 상태를 관리해 중복 수집을 막고 가격·원화 환산가·24시간 거래량·고가·저가·등락률을 같은 형식으로 저장했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">3개 네트워크의 가격·거래량·등락률을 하나의 API 형식으로 제공하고, 네트워크별 수집 작업을 동시에 1개만 실행하도록 제한했습니다.</dd>
+        </dl>
+      </div>
+
+      <div class="experience-item">
+        <h3 class="experience-title">온체인 거래와 보유 자산 데이터 정합성 확보</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>NestJS, MongoDB, Decimal.js</dd>
+          <dt>본인의 역할</dt>
+          <dd>사용자 포지션 계산 로직 개발</dd>
+          <dt>문제 정의</dt>
+          <dd>거래 분석 도중 서버가 종료되거나 같은 거래가 재처리되면 보유 수량이 누락·중복될 수 있었습니다. 또한 네트워크 수수료와 송금까지 반영하지 않으면 온체인 잔액과 서비스의 보유 자산이 달라졌습니다.</dd>
+          <dt>실행</dt>
+          <dd>거래 식별값과 사용자 ID를 복합 기준으로 이력을 upsert해 같은 거래의 중복 반영을 막고, 신규 수신 거래만 포지션에 반영했습니다. 성공한 온체인 거래를 기준으로 매수·매도·송금과 네트워크 수수료를 보유 수량에 반영하고 가중 평균 매수가를 다시 계산했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">4개 네트워크의 거래를 중복 없이 포지션에 반영하고, 수수료가 포함된 보유 수량·평균 매수가·평가 금액·수익률을 제공했습니다.</dd>
+        </dl>
+      </div>
+
+    </section>
+
+    <section class="company-section">
+      <div class="company-heading">
+        <div>
+          <h2>Nexters · Logit</h2>
+          <div class="description">IT 연합 동아리 · BE 리드 / 서버 개발자</div>
+        </div>
+        <div class="period">2026.01 – 2026.03</div>
+      </div>
+
+      <dl class="project-overview">
+        <div class="project-description">취업 준비생이 자신의 경험을 구조화해 저장하고, 지원 회사·직무·자기소개서 문항에 맞는 경험을 추천받아 자기소개서를 작성하는 서비스입니다.</div>
+        <dt>담당 파트</dt>
+        <dd>BE 리드로 백엔드 아키텍처와 API 규칙을 정하고 인증·경험·지원 프로젝트·문항·채팅 서버, RAG 추천 로직, MCP 서버, 운영 어드민과 dev/prod 배포 환경을 개발했습니다.</dd>
+        <dt>성과</dt>
+        <dd>Python·FastAPI 기반 비동기 API와 59개 자동화 테스트를 구축하고, 경험 추천·MCP·dev/prod 통합 운영 어드민을 제품에 적용했습니다.</dd>
+      </dl>
+
+      <div class="experience-item">
+        <h3 class="experience-title">RAG 도입과 경험 추천 성능 개선</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>Python, FastAPI, PostgreSQL, Qdrant, OpenAI API</dd>
+          <dt>본인의 역할</dt>
+          <dd>RAG 경험 추천 로직 개발</dd>
+          <dt>문제 정의</dt>
+          <dd>초기 추천은 자기소개서 문항과 단어가 비슷한 경험을 우선해, 지원 직무와 관련이 낮거나 회사 맥락에 맞지 않는 경험이 상위에 노출됐습니다.</dd>
+          <dt>실행</dt>
+          <dd>문항·직무·회사 정보를 각각 임베딩하고 문항 60%, 직무 25%, 회사 15%로 점수를 결합했습니다. 여기에 경험 태그의 Jaccard 유사도와 역량 카테고리 일치도를 보정값으로 추가했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">문항·직무·회사 3개 맥락과 태그·역량 2개 보정 기준을 함께 사용해 직무와 회사에 맞는 경험을 우선 추천하도록 개선했습니다.</dd>
+        </dl>
+      </div>
+
+      <div class="experience-item">
+        <h3 class="experience-title">비동기 API와 자동화 테스트 기반 구축</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>Python, FastAPI, SQLAlchemy, PostgreSQL, Alembic, pytest, Sentry</dd>
+          <dt>본인의 역할</dt>
+          <dd>백엔드 공통 구조 및 테스트 환경 구축</dd>
+          <dt>문제 정의</dt>
+          <dd>인증·사용자·프로젝트·경험·채팅 기능이 같은 DB와 외부 AI 서비스에 연결돼 있어, 한 기능의 변경이 다른 사용자 흐름을 깨뜨려도 배포 전에 확인하기 어려웠습니다.</dd>
+          <dt>실행</dt>
+          <dd>SQLAlchemy 비동기 세션과 asyncpg로 API의 DB 접근 방식을 통일하고 Alembic으로 스키마 변경을 관리했습니다. 테스트 DB 의존성 주입과 외부 API mock을 구성해 인증·사용자·경험·리포트 API를 독립적으로 검증했으며, Sentry와 요청 로깅 미들웨어로 배포 후 오류를 추적했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">4개 테스트 모듈에 59개 자동화 테스트를 구축해 주요 사용자 흐름의 회귀를 배포 전에 확인할 수 있게 했습니다.</dd>
+        </dl>
+      </div>
+
+      <div class="experience-item">
+        <h3 class="experience-title">취업 준비생의 비용 문제를 해결한 MCP 기능 도입</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>Python, FastMCP, PostgreSQL, Qdrant</dd>
+          <dt>본인의 역할</dt>
+          <dd>MCP 기능 제안 및 서버 설계·개발</dd>
+          <dt>문제 정의</dt>
+          <dd>사용자 인터뷰에서 취업 준비생은 비용 부담이 크고 이미 ChatGPT·Claude를 사용하고 있어, Logit의 AI 기능을 위해 새로운 구독료를 지불하거나 사용 도구를 바꿀 가능성이 낮았습니다.</dd>
+          <dt>실행</dt>
+          <dd>비개발자 팀원에게 MCP의 동작 방식과 사용자 흐름을 시연해 제품 방향을 합의했습니다. 사용자가 기존 AI에서 Logit 데이터를 활용하도록 경험 검색·저장, 문항별 경험 선택과 지원 프로젝트 조회 등 10개 도구를 구현하고 사용자별 데이터 접근을 분리했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">MCP 도구 10개를 제공해 사용자가 추가 AI 구독 없이 기존 AI에서 자신의 경험을 검색하고 자기소개서 작성까지 이어갈 수 있게 했습니다.</dd>
+        </dl>
+      </div>
+
+      <div class="experience-item">
+        <h3 class="experience-title">비개발자도 사용할 수 있는 운영 어드민 개발</h3>
+        <dl class="detail-list">
+          <dt>기술 스택</dt>
+          <dd>Next.js, Prisma, PostgreSQL, Qdrant, TanStack Query, NextAuth, Docker, Caddy</dd>
+          <dt>본인의 역할</dt>
+          <dd>운영 어드민 설계·개발·배포</dd>
+          <dt>문제 정의</dt>
+          <dd>시연 중 가입·채팅·경험 데이터에 문제가 생겨도 비개발자는 상태를 확인할 수 없었고, dev와 production 데이터가 분리돼 개발자가 각 DB와 벡터 저장소를 직접 조회해야 했습니다.</dd>
+          <dt>실행</dt>
+          <dd>dev와 production 연결을 한 화면에서 전환하고 사용자·프로젝트·문항·경험·채팅을 조회·수정·삭제하는 어드민을 배포했습니다. PostgreSQL과 Qdrant 데이터를 결합해 가입자·활성 사용자·경험·채팅 사용량을 대시보드로 제공했습니다.</dd>
+          <dt>성과</dt>
+          <dd class="result">dev/prod 2개 환경과 사용자·프로젝트·문항·경험·채팅 5개 운영 영역을 하나의 어드민에서 관리할 수 있게 했습니다.</dd>
+        </dl>
+      </div>
+    </section>
+
+  </article>
+</body>
+</html>

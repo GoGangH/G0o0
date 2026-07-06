@@ -56,6 +56,36 @@
       break-before: auto;
     }
 
+    @media screen {
+      body {
+        min-width: 320px;
+        padding: 24px 16px;
+        background: #eef1f5;
+      }
+
+      .page {
+        width: min(100%, 210mm);
+        margin: 0 auto 24px;
+        padding: 11mm 13mm 12mm;
+        background: #fff;
+        box-shadow: 0 18px 50px rgba(20, 35, 59, 0.14);
+      }
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        background: #fff;
+      }
+
+      .page {
+        width: auto;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+      }
+    }
+
     header {
       border-top: 5px solid var(--accent);
       padding-top: 8mm;

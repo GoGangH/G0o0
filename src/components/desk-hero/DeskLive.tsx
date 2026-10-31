@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties, type FocusEvent, type KeyboardEvent, type ReactNode } from "react";
 import { follow, useInView, useLoop, useStillness } from "../iso/react/live";
-import type { LatestPost } from "./DeskPhone";
+import type { PhonePost } from "./PhoneScreens";
 import { hotspots, type Hotspot } from "./hotspots";
 
 const DeskTerminal = dynamic(() => import("./DeskTerminal").then((mod) => mod.DeskTerminal), { ssr: false });
@@ -34,7 +34,7 @@ const toggleMode = () => {
 };
 
 type Run = { id: string; group: string; art: ReactNode };
-export function DeskLive({ runs, width, height, shift, glow, beacons, framePivot, latestPost }: { runs: Run[]; width: number; height: number; shift: number[]; glow: string; beacons: { id: string; at: number[] }[]; framePivot: number[]; latestPost?: LatestPost }) {
+export function DeskLive({ runs, width, height, shift, glow, beacons, framePivot, posts }: { runs: Run[]; width: number; height: number; shift: number[]; glow: string; beacons: { id: string; at: number[] }[]; framePivot: number[]; posts: PhonePost[] }) {
   const [overlay, setOverlay] = useState<"terminal" | "phone" | null>(null);
   // null until mounted: what was already clicked lives in localStorage, so nothing blinks before it is read.
   const [seen, setSeen] = useState<string[] | null>(null);
@@ -182,6 +182,6 @@ export function DeskLive({ runs, width, height, shift, glow, beacons, framePivot
       </g>)}
     </svg>
     {overlay === "terminal" && <DeskTerminal onClose={() => setOverlay(null)} />}
-    {overlay === "phone" && <DeskPhone onClose={() => setOverlay(null)} onOpenTerminal={() => setOverlay("terminal")} latestPost={latestPost} />}
+    {overlay === "phone" && <DeskPhone onClose={() => setOverlay(null)} posts={posts} />}
   </div>;
 }

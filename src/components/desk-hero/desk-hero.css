@@ -1,0 +1,162 @@
+.desk-room { background: var(--background); transition: background .35s; }
+
+.desk-hero.iso[data-theme="light"] {
+  --anatomy-paper: #f4f4f2; --anatomy-top: #ffffff;
+  --anatomy-shade-0: #cfd1d4; --anatomy-shade-1: #dcdde0;
+  --anatomy-shade-2: #e7e8ea; --anatomy-shade-3: #f0f1f2;
+  --anatomy-hi: #24262a; --anatomy-mid: #24262a;
+  --anatomy-lo: #7a7e85; --anatomy-faint: #dcdfe3;
+}
+html[data-mode="dark"] .desk-hero.iso[data-theme="light"] {
+  --anatomy-paper: #2a2d32; --anatomy-top: #383c42;
+  --anatomy-shade-0: #1c1e22; --anatomy-shade-1: #22252a;
+  --anatomy-shade-2: #282b30; --anatomy-shade-3: #2e3136;
+  --anatomy-hi: #0e0f11; --anatomy-mid: #0e0f11;
+  --anatomy-lo: #4a4e55; --anatomy-faint: #2a2d32;
+}
+.desk-hero .iso-svg { width: 100%; height: 100%; }
+.desk-hero .iso-svg path { transition: fill .35s; }
+.desk-live .iso-svg { overflow: visible; }
+@media (max-aspect-ratio: 1/1) {
+  .desk-live .iso-svg { width: 118%; margin-left: -9%; }
+}
+
+.desk-hero [data-material="ink"], .desk-hero [data-material="screen"] {
+  --anatomy-paper: #1b1d21; --anatomy-top: #2b2e33;
+  --anatomy-shade-0: #15171a; --anatomy-shade-1: #1b1d21;
+  --anatomy-shade-2: #202327; --anatomy-shade-3: #26292d;
+}
+.desk-hero [data-material="screen"] { --anatomy-top: #16181c; }
+.desk-hero [data-material="wall"] {
+  --anatomy-top: #ffffff;
+  --anatomy-shade-0: #e4e5e7; --anatomy-shade-1: #eaebed;
+  --anatomy-shade-2: #f0f1f2; --anatomy-shade-3: #f6f6f7;
+}
+.desk-hero [data-material="floor"] {
+  --anatomy-top: #c9b596;
+  --anatomy-shade-0: #9a8568; --anatomy-shade-1: #a48f71;
+  --anatomy-shade-2: #af9a7b; --anatomy-shade-3: #baa585;
+}
+.desk-hero [data-material="rug"] {
+  --anatomy-top: #d4dae1;
+  --anatomy-shade-0: #aeb5be; --anatomy-shade-1: #aeb5be;
+  --anatomy-shade-2: #bcc3cb; --anatomy-shade-3: #bcc3cb;
+}
+.desk-hero [data-material="glass"] {
+  --anatomy-top: #d6e6f2;
+  --anatomy-shade-0: #d6e6f2; --anatomy-shade-1: #d6e6f2;
+  --anatomy-shade-2: #d6e6f2; --anatomy-shade-3: #d6e6f2;
+}
+.desk-hero [data-material="leaf"] {
+  --anatomy-top: #6d8f76;
+  --anatomy-shade-0: #3f5b48; --anatomy-shade-1: #4b6a55;
+  --anatomy-shade-2: #577762; --anatomy-shade-3: #62826c;
+}
+.desk-hero [data-material="accent"] {
+  --anatomy-top: #365c86;
+  --anatomy-shade-0: #233f5e; --anatomy-shade-1: #294868;
+  --anatomy-shade-2: #2e5073; --anatomy-shade-3: #33567c;
+}
+.desk-hero [data-material="accent-soft"] { --anatomy-top: #9fbcd9; }
+
+html[data-mode="dark"] .desk-hero [data-material="ink"] {
+  --anatomy-paper: #2a2d32; --anatomy-top: #3f444b;
+  --anatomy-shade-0: #24272b; --anatomy-shade-1: #2a2d32;
+  --anatomy-shade-2: #303338; --anatomy-shade-3: #363a40;
+}
+html[data-mode="dark"] .desk-hero [data-material="screen"] { --anatomy-top: #1f3a5a; }
+html[data-mode="dark"] .desk-hero [data-material="wall"] {
+  --anatomy-top: #2a2d32;
+  --anatomy-shade-0: #16181b; --anatomy-shade-1: #1a1c20;
+  --anatomy-shade-2: #1e2024; --anatomy-shade-3: #222529;
+}
+html[data-mode="dark"] .desk-hero [data-material="floor"] {
+  --anatomy-top: #2b2722;
+  --anatomy-shade-0: #171512; --anatomy-shade-1: #1b1815;
+  --anatomy-shade-2: #1f1c18; --anatomy-shade-3: #231f1b;
+}
+html[data-mode="dark"] .desk-hero [data-material="rug"] {
+  --anatomy-top: #252b33;
+  --anatomy-shade-0: #171b20; --anatomy-shade-1: #171b20;
+  --anatomy-shade-2: #1b2026; --anatomy-shade-3: #1b2026;
+}
+html[data-mode="dark"] .desk-hero [data-material="glass"] {
+  --anatomy-top: #16233a;
+  --anatomy-shade-0: #16233a; --anatomy-shade-1: #16233a;
+  --anatomy-shade-2: #16233a; --anatomy-shade-3: #16233a;
+}
+html[data-mode="dark"] .desk-hero [data-material="leaf"] {
+  --anatomy-top: #2f4238;
+  --anatomy-shade-0: #18221c; --anatomy-shade-1: #1c2a22;
+  --anatomy-shade-2: #213128; --anatomy-shade-3: #26382e;
+}
+html[data-mode="dark"] .desk-hero [data-part="lamp"] [data-material="paper"] {
+  --anatomy-top: #fff0c4;
+  --anatomy-shade-0: #e8d28c; --anatomy-shade-1: #eed998;
+  --anatomy-shade-2: #f3e0a4; --anatomy-shade-3: #f7e7b2;
+}
+
+/* Hover reactions: each object answers in its own way. */
+.desk-hero [data-part="drawer"][data-active] [data-material="paper"] .iso-top { fill: #9fbcd9; }
+
+.desk-hero [data-piece^="book-2"] { transition: transform .28s cubic-bezier(.2, .8, .2, 1); }
+.desk-hero [data-part="books"][data-active] [data-piece^="book-2"] { transform: translateY(-11px); }
+
+.desk-hero [data-part="frame"] { transform-box: view-box; transform-origin: var(--frame-x) var(--frame-y); }
+.desk-hero [data-part="frame"][data-active] { animation: frame-swing .9s ease-out; }
+@keyframes frame-swing { 20% { transform: rotate(-2.6deg); } 45% { transform: rotate(2deg); } 70% { transform: rotate(-1deg); } }
+
+.desk-hero .desk-line { fill: #f4f4f2; }
+.desk-hero .desk-terminal:not([data-typing]) .desk-line { display: none; }
+.desk-hero .desk-terminal[data-typing] .desk-prompt { display: none; }
+.desk-hero .desk-terminal[data-typing] .desk-cursor { animation: cursor-blink 1s steps(2, jump-none) infinite; }
+.desk-hero [data-part="monitor"][data-active] [data-material="screen"] { --anatomy-top: #1d2a3a; }
+@keyframes cursor-blink { 50% { opacity: 0; } }
+
+.desk-hero .desk-lock { opacity: 0; pointer-events: none; transition: opacity .25s; }
+.desk-hero [data-part="phone"][data-active] .desk-lock { opacity: 1; }
+.desk-hero .desk-lock-time { fill: #fff; font-weight: 300; }
+.desk-hero .desk-lock-date { fill: #fff; font-weight: 500; }
+
+.desk-live[data-active-part="lamp"] .desk-glow { animation: lamp-flicker 1s linear forwards; }
+.desk-hero [data-part="lamp"][data-active] [data-piece="lamp-shade"] .iso-top { fill: #fff0c4; animation: shade-flicker 1s linear; }
+@keyframes lamp-flicker {
+  0%, 12%, 26%, 44%, 60% { opacity: 0; }
+  6%, 20%, 36%, 52% { opacity: .3; }
+  100% { opacity: .22; }
+}
+@keyframes shade-flicker {
+  0%, 12%, 26%, 44%, 60% { fill: #d8d4c6; }
+  6%, 20%, 36%, 52%, 100% { fill: #fff0c4; }
+}
+.desk-hero .desk-terminal .iso-face-text { fill: #f4f4f2; }
+.desk-hero .desk-accent { fill: #9fbcd9; }
+.desk-hero .desk-moon { fill: #f4ecc8; opacity: 0; transition: opacity .35s; }
+html[data-mode="dark"] .desk-hero .desk-moon { opacity: 1; }
+html[data-mode="dark"] .desk-hero [data-part="phone"] [data-material="paper"] { --anatomy-top: #f4f4f2; }
+.desk-hero .desk-hit { fill: transparent; pointer-events: all; }
+.desk-hero .desk-glow { fill: #ffdf9e; opacity: 0; pointer-events: none; transition: opacity .35s; }
+html[data-mode="dark"] .desk-hero .desk-glow { opacity: .16; }
+.desk-hero svg a, .desk-hero .desk-action { cursor: pointer; }
+.desk-hero svg a:focus-visible, .desk-hero .desk-action:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.desk-hero .desk-action:focus:not(:focus-visible) { outline: none; }
+.desk-hero .desk-live { touch-action: pan-y; }
+
+/* Marks what can be clicked until it has been clicked once. */
+.desk-beacon { pointer-events: none; }
+.desk-beacon-dot { fill: #f2703a; stroke: #fff; stroke-width: 1.5; animation: beacon-blink 1.6s ease-in-out infinite; animation-delay: var(--beacon-delay); }
+.desk-beacon-ring { fill: #f2703a; opacity: 0; transform-box: fill-box; transform-origin: center; animation: beacon-ring 1.6s ease-out infinite; animation-delay: var(--beacon-delay); }
+@keyframes beacon-blink { 50% { opacity: .35; } }
+@keyframes beacon-ring { 0% { opacity: .55; transform: scale(.8); } 100% { opacity: 0; transform: scale(3); } }
+@media (max-aspect-ratio: 1/1) {
+  .desk-beacon-dot { r: 11px; }
+  .desk-beacon-ring { r: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .desk-beacon-dot, .desk-beacon-ring { animation: none; }
+  .desk-hero [data-part="frame"][data-active], .desk-hero .desk-terminal[data-typing] .desk-cursor, .desk-hero [data-part="lamp"][data-active] [data-piece="lamp-shade"] .iso-top { animation: none; }
+  .desk-live[data-active-part="lamp"] .desk-glow { animation: none; opacity: .22; }
+  .desk-hero [data-piece^="book-2"], .desk-hero .desk-lock { transition: none; }
+}
+
+.room-object { flex: none; width: clamp(72px, 12vw, 128px); height: clamp(72px, 12vw, 128px); }

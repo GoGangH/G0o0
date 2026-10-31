@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Noto_Sans_KR, Noto_Serif_KR, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { cn } from "@/utils";
-import Header from "@/components/Header";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const koreanSans = Noto_Sans_KR({
+  variable: "--font-korean-sans",
   subsets: ["latin"],
+});
+
+const koreanSerif = Noto_Serif_KR({
+  variable: "--font-korean-serif",
+  subsets: ["latin"],
+  weight: ["500", "600"],
 });
 
 const geistMono = Geist_Mono({
@@ -20,17 +25,21 @@ export const metadata: Metadata = {
   description: "KangHyun's Profile",
 };
 
+const applySavedMode = `try{if(localStorage.getItem("mode")==="dark")document.documentElement.dataset.mode="dark"}catch{}`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={cn(geistMono, geistSans, "flex justify-center")}>
-        <Header />
+    <html lang="ko" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: applySavedMode }} />
+      </head>
+      <body className={cn(koreanSans.variable, koreanSerif.variable, geistMono.variable)}>
         <Toaster position="top-center" richColors />
-        <div className="max-w-3xl w-full mt-16 px-4 py-6">{children}</div>
+        {children}
       </body>
     </html>
   );

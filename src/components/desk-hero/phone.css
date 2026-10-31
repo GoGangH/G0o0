@@ -1,0 +1,141 @@
+/* One --u is one point on a 393x852 iPhone screen, so the whole phone scales as a unit. */
+.iphone {
+  --h: min(90svh, 780px, calc((100vw - 28px) * 2.168));
+  --u: calc(var(--h) / 852);
+  position: relative;
+  height: var(--h);
+  aspect-ratio: 393 / 852;
+  padding: calc(var(--u) * 3.5);
+  border-radius: calc(var(--u) * 62);
+  background: linear-gradient(135deg, #d9d6cf, #8d8a84 22%, #c9c6bf 48%, #7f7c76 74%, #cfccc5);
+  box-shadow: 0 calc(var(--u) * 40) calc(var(--u) * 90) rgb(0 0 0 / 45%), inset 0 0 calc(var(--u) * 2) rgb(255 255 255 / 70%);
+  animation: phone-in .32s cubic-bezier(.2, .8, .2, 1);
+}
+@keyframes phone-in { from { opacity: 0; transform: translateY(14px) scale(.96); } }
+.iphone-bezel { height: 100%; padding: calc(var(--u) * 8); border-radius: calc(var(--u) * 58); background: #050506; }
+.iphone-screen {
+  position: relative; display: flex; flex-direction: column; height: 100%; overflow: hidden;
+  padding: 0 calc(var(--u) * 20) calc(var(--u) * 26);
+  border-radius: calc(var(--u) * 50); color: #fff; font-size: calc(var(--u) * 13);
+}
+.iphone-wallpaper {
+  position: absolute; inset: 0; transition: filter .35s;
+  background:
+    radial-gradient(80% 42% at 18% 12%, #8fdcff 0, transparent 70%),
+    radial-gradient(70% 40% at 88% 28%, #6f7dff 0, transparent 72%),
+    radial-gradient(90% 44% at 25% 62%, #1fb8b0 0, transparent 70%),
+    radial-gradient(85% 42% at 85% 78%, #ff8a5c 0, transparent 70%),
+    radial-gradient(80% 36% at 15% 100%, #f2c14e 0, transparent 70%),
+    #2a3f9b;
+}
+html[data-mode="dark"] .iphone-wallpaper { filter: brightness(.55) saturate(1.1); }
+.iphone-screen > :not(.iphone-wallpaper) { position: relative; }
+
+.iphone-button { position: absolute; width: calc(var(--u) * 3.5); border-radius: 2px; background: linear-gradient(90deg, #6f6c67, #b8b5ae); }
+.iphone-action { left: calc(var(--u) * -3); top: 17%; height: 3.6%; }
+.iphone-volume-up { left: calc(var(--u) * -3); top: 23.500%; height: 7.200%; }
+.iphone-volume-down { left: calc(var(--u) * -3); top: 32%; height: 7.200%; }
+.iphone-power { right: calc(var(--u) * -3); top: 26%; height: 11%; }
+
+.status-bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: calc(var(--u) * 58); padding-inline: calc(var(--u) * 12); font-weight: 600; }
+.status-time { font-size: calc(var(--u) * 16); letter-spacing: -.01em; }
+.status-icons { justify-self: end; width: calc(var(--u) * 66); height: calc(var(--u) * 12); }
+.dynamic-island { width: calc(var(--u) * 122); height: calc(var(--u) * 35); border-radius: 999px; background: #000; }
+
+/* Liquid Glass: a blurred, saturated backdrop under a bright specular rim. */
+.glass {
+  position: relative; isolation: isolate;
+  background: linear-gradient(145deg, rgb(255 255 255 / 30%), rgb(255 255 255 / 10%) 55%, rgb(255 255 255 / 18%));
+  -webkit-backdrop-filter: blur(calc(var(--u) * 14)) saturate(185%) brightness(1.06);
+  backdrop-filter: blur(calc(var(--u) * 14)) saturate(185%) brightness(1.06);
+  box-shadow:
+    inset 0 calc(var(--u) * 1) calc(var(--u) * 1) rgb(255 255 255 / 55%),
+    inset 0 calc(var(--u) * -1) calc(var(--u) * 2) rgb(255 255 255 / 22%),
+    inset 0 0 calc(var(--u) * 14) rgb(255 255 255 / 14%),
+    0 calc(var(--u) * 10) calc(var(--u) * 28) rgb(8 16 48 / 28%);
+}
+.glass::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; padding: max(1px, calc(var(--u) * 1)); border-radius: inherit; pointer-events: none;
+  background: linear-gradient(135deg, rgb(255 255 255 / 90%), rgb(255 255 255 / 15%) 38%, rgb(255 255 255 / 8%) 62%, rgb(255 255 255 / 60%));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+
+.widgets { display: grid; grid-template-columns: 1fr 2.1fr; gap: calc(var(--u) * 14); margin-top: calc(var(--u) * 14); }
+.widget { display: flex; flex-direction: column; height: calc(var(--u) * 148); padding: calc(var(--u) * 15); border-radius: calc(var(--u) * 24); text-shadow: 0 1px 2px rgb(8 16 48 / 35%); }
+.widget-date { justify-content: space-between; }
+.widget-weekday { font-size: calc(var(--u) * 13); font-weight: 600; }
+.widget-day { font-size: calc(var(--u) * 50); font-weight: 300; line-height: 1; letter-spacing: -.03em; }
+.widget-post { justify-content: space-between; gap: calc(var(--u) * 8); }
+.widget-kicker { font-size: calc(var(--u) * 11.5); font-weight: 500; opacity: .85; }
+.widget-title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; font-size: calc(var(--u) * 15); font-weight: 600; line-height: 1.32; }
+
+.app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: calc(var(--u) * 22) calc(var(--u) * 20); margin-top: calc(var(--u) * 24); }
+.app { display: block; min-width: 0; text-align: center; transition: transform .16s; }
+.app:active { transform: scale(.92); }
+.app:focus-visible, .widget:focus-visible, .home-indicator:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.app-icon {
+  position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1; overflow: hidden; border-radius: 23%;
+  color: #fff;
+  box-shadow: inset 0 calc(var(--u) * 1) calc(var(--u) * 1) rgb(255 255 255 / 55%), inset 0 calc(var(--u) * -1) calc(var(--u) * 2) rgb(0 0 0 / 14%), 0 calc(var(--u) * 5) calc(var(--u) * 14) rgb(8 16 48 / 30%);
+}
+.app-icon::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(155deg, rgb(255 255 255 / 34%), rgb(255 255 255 / 6%) 46%, rgb(255 255 255 / 0%) 62%, rgb(255 255 255 / 12%));
+  box-shadow: inset 0 0 0 max(.5px, calc(var(--u) * .6)) rgb(255 255 255 / 28%);
+}
+.app-glyph { width: 56%; height: 56%; filter: drop-shadow(0 1px 1px rgb(0 0 0 / 22%)); }
+.app-label { display: block; margin-top: calc(var(--u) * 5); overflow: hidden; font-size: calc(var(--u) * 11.5); font-weight: 500; white-space: nowrap; text-overflow: ellipsis; text-shadow: 0 1px 2px rgb(8 16 48 / 55%); }
+
+.tint-blue { background: linear-gradient(160deg, #6fb6ff, #2468e0); }
+.tint-amber { background: linear-gradient(160deg, #ffd166, #f08a24); }
+.tint-violet { background: linear-gradient(160deg, #b08cff, #6236d8); }
+.tint-paper { background: linear-gradient(160deg, #ffffff, #d9dde3); color: #3a3f47; }
+.tint-sky { background: linear-gradient(160deg, #7fd4ff, #1f8ff0); }
+.tint-ink { background: linear-gradient(160deg, #4a4d54, #111316); }
+.tint-linkedin { background: linear-gradient(160deg, #3f9be8, #0a58b0); }
+.tint-terminal { background: linear-gradient(160deg, #3a3d44, #0c0d10); color: #8ff0b4; }
+.mini-database { background: linear-gradient(160deg, #6fb6ff, #2468e0); }
+.mini-backend { background: linear-gradient(160deg, #5fe0c0, #0f9a86); }
+.mini-ai-product { background: linear-gradient(160deg, #ff9fc2, #e0407c); }
+
+.folder-icon { grid-template-columns: repeat(3, 1fr); gap: 7%; place-items: stretch; align-content: center; padding: 14%; overflow: visible; }
+.folder-icon::after { content: none; }
+.folder-mini { width: 100%; aspect-ratio: 1; border-radius: 26%; }
+
+.page-dots { display: flex; justify-content: center; gap: calc(var(--u) * 8); margin-top: auto; padding-bottom: calc(var(--u) * 12); }
+.page-dots span { width: calc(var(--u) * 7); height: calc(var(--u) * 7); border-radius: 50%; background: rgb(255 255 255 / 40%); }
+.page-dots .is-on { background: #fff; }
+
+.dock { display: grid; grid-template-columns: repeat(4, 1fr); gap: calc(var(--u) * 20); padding: calc(var(--u) * 14); border-radius: calc(var(--u) * 34); }
+
+.home-indicator {
+  position: absolute !important; left: 50%; bottom: calc(var(--u) * 8); width: calc(var(--u) * 138); height: calc(var(--u) * 5);
+  border-radius: 999px; background: rgb(255 255 255 / 85%); transform: translateX(-50%);
+}
+.home-indicator::after { content: ""; position: absolute; inset: calc(var(--u) * -10) 0; }
+
+.folder-layer {
+  position: absolute !important; inset: 0; display: flex; align-items: center; justify-content: center;
+  padding: calc(var(--u) * 28);
+  background: rgb(10 16 40 / 20%);
+  -webkit-backdrop-filter: blur(calc(var(--u) * 22)) saturate(140%);
+  backdrop-filter: blur(calc(var(--u) * 22)) saturate(140%);
+  animation: folder-in .22s cubic-bezier(.2, .8, .2, 1);
+}
+@keyframes folder-in { from { opacity: 0; transform: scale(.92); } }
+.folder-title { margin-bottom: calc(var(--u) * 14); font-size: calc(var(--u) * 26); font-weight: 600; text-align: center; }
+.folder-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: calc(var(--u) * 20); width: calc(var(--u) * 290); padding: calc(var(--u) * 22); border-radius: calc(var(--u) * 36); }
+
+.phone-close {
+  position: fixed; top: 16px; right: 16px; z-index: 1; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+  color: #fff; background: rgb(255 255 255 / 16%); box-shadow: inset 0 1px 1px rgb(255 255 255 / 50%);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
+.phone-close:hover { background: rgb(255 255 255 / 28%); }
+
+@media (prefers-reduced-motion: reduce) {
+  .iphone, .folder-layer { animation: none; }
+  .app { transition: none; }
+}

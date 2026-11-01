@@ -4,12 +4,12 @@ date: "2026-03-12"
 category: "database"
 tags: ["mongodb", "replication"]
 summary: "가입 직후 조회 실패가 왜 간헐적으로 발생했는지 추적하고, 쓰기 보장 수준을 조정해 운영 이슈를 줄인 과정입니다."
-draft: true
+draft: false
 ---
 
 ## 문제
 
-Salt Hub에서 가입 직후의 조회가 간헐적으로 실패했습니다. 항상 재현되지 않아서 애플리케이션 로직보다 데이터가 읽히는 시점을 먼저 의심했습니다.
+Salt Hub에서 가입 직후의 조회가 간헐적으로 실패했습니다.
 
 ## 원인
 

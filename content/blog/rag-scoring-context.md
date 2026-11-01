@@ -4,7 +4,7 @@ date: "2026-01-30"
 category: "ai-product"
 tags: ["rag", "recommendation"]
 summary: "취업 준비생의 경험을 자기소개서 문항에 맞게 추천하기 위해 적용한 가중치, 태그 유사도, 역량 보정 기준입니다."
-draft: true
+draft: false
 ---
 
 ## 문제

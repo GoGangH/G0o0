@@ -4,7 +4,7 @@ date: "2026-02-24"
 category: "backend"
 tags: ["bullmq", "redis", "queue"]
 summary: "외부 체인 데이터 지연과 서버 재시작 사이에서도 거래 이력 누락 가능성을 낮춘 큐 설계와 재시도 전략을 정리했습니다."
-draft: true
+draft: false
 ---
 
 ## 문제

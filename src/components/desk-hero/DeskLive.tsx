@@ -2,13 +2,16 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useRef, useState, type CSSProperties, type FocusEvent, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type FocusEvent, type KeyboardEvent, type ReactNode } from "react";
+import { toggleMode } from "@/lib/theme";
 import { follow, useInView, useLoop, useStillness } from "../iso/react/live";
 import type { PhonePost } from "./PhoneScreens";
 import { hotspots, type Hotspot } from "./hotspots";
 
-const DeskTerminal = dynamic(() => import("./DeskTerminal").then((mod) => mod.DeskTerminal), { ssr: false });
-const DeskPhone = dynamic(() => import("./DeskPhone").then((mod) => mod.DeskPhone), { ssr: false });
+const loadTerminal = () => import("./DeskTerminal").then((mod) => mod.DeskTerminal);
+const loadPhone = () => import("./DeskPhone").then((mod) => mod.DeskPhone);
+const DeskTerminal = dynamic(loadTerminal, { ssr: false });
+const DeskPhone = dynamic(loadPhone, { ssr: false });
 
 const SEEN_KEY = "room-seen";
 const SCREEN_TEXT = ["~/g0o0 $ whoami", "kanghyun (backend)", "~/g0o0 $ ls", "blog projects career"];
@@ -22,15 +25,6 @@ const readSeen = (): string[] => {
   } catch {
     return [];
   }
-};
-
-const toggleMode = () => {
-  const root = document.documentElement;
-  const next = root.dataset.mode === "dark" ? "light" : "dark";
-  root.dataset.mode = next;
-  try {
-    localStorage.setItem("mode", next);
-  } catch {}
 };
 
 type Run = { id: string; group: string; art: ReactNode };
@@ -119,7 +113,15 @@ export function DeskLive({ runs, width, height, shift, glow, beacons, framePivot
   }, visible && !still);
   useEffect(() => {
     setSeen(readSeen());
-    return () => clearInterval(typing.current);
+    // Fetched shortly after the room is up, so the first click on the phone or monitor doesn't wait on the network.
+    const preload = window.setTimeout(() => {
+      void loadPhone();
+      void loadTerminal();
+    }, 1200);
+    return () => {
+      clearInterval(typing.current);
+      clearTimeout(preload);
+    };
   }, []);
   useEffect(() => {
     if (still) {
@@ -148,34 +150,42 @@ export function DeskLive({ runs, width, height, shift, glow, beacons, framePivot
     if (action === "mode") toggleMode();
     else if (action) setOverlay(action);
   };
-  const tabbed = new Set<string>();
-  return <div ref={anchor} className="desk-live h-full" style={{ "--frame-x": `${framePivot[0]}px`, "--frame-y": `${framePivot[1]}px` } as CSSProperties}>
+  const latest = useRef({ interact, act, markSeen });
+  latest.current = { interact, act, markSeen };
+  // The drawing never changes after mount, so clicks and overlays must not re-render its hundreds of paths.
+  const scene = useMemo(() => {
+    const tabbed = new Set<string>();
+    return runs.map((run) => {
+      const hotspot = hotspots.find((item) => item.id === run.group);
+      if (!hotspot) return <g key={run.id}>{run.art}</g>;
+      const first = !tabbed.has(run.group);
+      tabbed.add(run.group);
+      const shared = {
+        "aria-label": hotspot.label,
+        tabIndex: first ? 0 : -1,
+        onPointerEnter: () => latest.current.interact("hovered", hotspot.id),
+        onPointerLeave: () => latest.current.interact("hovered", ""),
+        // A mouse click also focuses; only keyboard focus should hold the highlight.
+        onFocus: (event: FocusEvent<Element>) => {
+          if (event.currentTarget.matches(":focus-visible")) latest.current.interact("focused", hotspot.id);
+        },
+        onBlur: () => latest.current.interact("focused", ""),
+      };
+      if (hotspot.href) return <Link key={run.id} href={hotspot.href} {...shared} onClick={() => latest.current.markSeen(hotspot.id)}><title>{hotspot.label}</title>{run.art}</Link>;
+      return <g key={run.id} role="button" className="desk-action" {...shared} onClick={() => latest.current.act(hotspot)}
+        onKeyDown={(event: KeyboardEvent) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          latest.current.act(hotspot);
+        }}><title>{hotspot.label}</title>{run.art}</g>;
+    });
+  }, [runs]);
+  return <div ref={anchor} className="desk-live h-full" data-overlay={overlay ? "" : undefined} style={{ "--frame-x": `${framePivot[0]}px`, "--frame-y": `${framePivot[1]}px` } as CSSProperties}>
     <svg viewBox={`0 0 ${width} ${height}`} className="iso-svg" role="group" aria-label="고강현의 방. 물건을 선택해 둘러보세요">
-      {runs.map((run) => {
-        const hotspot = hotspots.find((item) => item.id === run.group);
-        if (!hotspot) return <g key={run.id}>{run.art}</g>;
-        const first = !tabbed.has(run.group);
-        tabbed.add(run.group);
-        const shared = {
-          "aria-label": hotspot.label,
-          tabIndex: first ? 0 : -1,
-          onPointerEnter: () => interact("hovered", hotspot.id),
-          onPointerLeave: () => interact("hovered", ""),
-          // A mouse click also focuses; only keyboard focus should hold the highlight.
-          onFocus: (event: FocusEvent<Element>) => {
-            if (event.currentTarget.matches(":focus-visible")) interact("focused", hotspot.id);
-          },
-          onBlur: () => interact("focused", ""),
-        };
-        if (hotspot.href) return <Link key={run.id} href={hotspot.href} {...shared} onClick={() => markSeen(hotspot.id)}><title>{hotspot.label}</title>{run.art}</Link>;
-        return <g key={run.id} role="button" className="desk-action" {...shared} onClick={() => act(hotspot)}
-          onKeyDown={(event: KeyboardEvent) => {
-            if (event.key !== "Enter" && event.key !== " ") return;
-            event.preventDefault();
-            act(hotspot);
-          }}><title>{hotspot.label}</title>{run.art}</g>;
-      })}
+      {scene}
       <path className="desk-glow" d={glow} />
+    </svg>
+    <svg viewBox={`0 0 ${width} ${height}`} className="iso-svg desk-beacon-layer" aria-hidden="true">
       {seen && beacons.filter(({ id }) => !seen.includes(id)).map(({ id, at }, index) => <g key={id} data-beacon={id} className="desk-beacon" style={{ "--beacon-delay": `${index * 0.27}s` } as CSSProperties}>
         <circle className="desk-beacon-ring" cx={at[0]} cy={at[1]} r="7" />
         <circle className="desk-beacon-dot" cx={at[0]} cy={at[1]} r="6" />

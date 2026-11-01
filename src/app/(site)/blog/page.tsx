@@ -1,21 +1,15 @@
 import type { Metadata } from "next";
-import { CategoryNav } from "@/components/blog/CategoryNav";
-import { PostList } from "@/components/blog/PostList";
-import { PageHeading } from "@/components/site/PageHeading";
+import { BlogIndex } from "@/components/blog/BlogIndex";
+import { RecordStage } from "@/components/records/RecordStage";
 import { getPosts } from "@/lib/blog/posts";
 
-export const metadata: Metadata = { title: "블로그 · 고강현", description: "운영 중 마주친 문제와 기술 선택의 이유를 기록합니다." };
+const description = "운영 중 마주친 문제와 기술 선택의 이유를 기록합니다.";
+
+export const metadata: Metadata = { title: "블로그 · 고강현", description, alternates: { canonical: "/blog" } };
 
 export default function BlogPage() {
-  return (
-    <section className="site-width site-page">
-      <div className="max-w-[780px]">
-        <PageHeading title="블로그" object="books">
-          <p className="mt-4 text-sm leading-7 text-muted">운영 중 마주친 문제와 기술 선택의 이유를 기록합니다.</p>
-          <CategoryNav />
-        </PageHeading>
-        <PostList posts={getPosts()} />
-      </div>
-    </section>
-  );
+  return <>
+    <RecordStage title="G0O0 Records" description={description} />
+    <BlogIndex title="최신 트랙" posts={getPosts()} shelf compactTop />
+  </>;
 }

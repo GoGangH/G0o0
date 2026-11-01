@@ -27,7 +27,10 @@ export async function renderPost(markdown: string) {
         }
       }
     })
-    .use(rehypeShiki, { themes: { light: "github-light", dark: "github-dark" }, defaultColor: false })
+    .use(rehypeShiki, {
+      themes: { light: "github-light", dark: "github-dark" }, defaultColor: false,
+      transformers: [{ pre(node) { node.properties["data-language"] = this.options.lang; } }],
+    })
     .use(rehypeStringify)
     .process(markdown);
   return { html: String(file), toc };

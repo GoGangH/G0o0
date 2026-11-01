@@ -1,28 +1,21 @@
 import type { Metadata } from "next";
-import { Noto_Sans_KR, Noto_Serif_KR, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
 import { Toaster } from "sonner";
-import { cn } from "@/utils";
-
-const koreanSans = Noto_Sans_KR({
-  variable: "--font-korean-sans",
-  subsets: ["latin"],
-});
-
-const koreanSerif = Noto_Serif_KR({
-  variable: "--font-korean-serif",
-  subsets: ["latin"],
-  weight: ["500", "600"],
-});
+import { SITE_URL } from "@/lib/site";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  preload: false,
 });
 
 export const metadata: Metadata = {
-  title: "G0o0",
-  description: "KangHyun's Profile",
+  metadataBase: new URL(SITE_URL),
+  title: "고강현",
+  description: "백엔드 개발자 고강현의 방",
+  alternates: { types: { "application/rss+xml": "/rss.xml" } },
 };
 
 const applySavedMode = `try{if(localStorage.getItem("mode")==="dark")document.documentElement.dataset.mode="dark"}catch{}`;
@@ -37,7 +30,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: applySavedMode }} />
       </head>
-      <body className={cn(koreanSans.variable, koreanSerif.variable, geistMono.variable)}>
+      <body className={geistMono.variable}>
         <Toaster position="top-center" richColors />
         {children}
       </body>

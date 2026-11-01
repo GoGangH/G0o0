@@ -1,4 +1,4 @@
-.desk-room { background: var(--background); transition: background .35s; }
+.desk-room { background: var(--background); }
 
 .desk-hero.iso[data-theme="light"] {
   --anatomy-paper: #f4f4f2; --anatomy-top: #ffffff;
@@ -15,8 +15,12 @@ html[data-mode="dark"] .desk-hero.iso[data-theme="light"] {
   --anatomy-lo: #4a4e55; --anatomy-faint: #2a2d32;
 }
 .desk-hero .iso-svg { width: 100%; height: 100%; }
-.desk-hero .iso-svg path { transition: fill .35s; }
+.desk-live { position: relative; }
 .desk-live .iso-svg { overflow: visible; }
+/* Its own layer: the blinking must not repaint the room's hundreds of paths. */
+.desk-beacon-layer { position: absolute; top: 0; left: 0; pointer-events: none; will-change: transform; }
+/* Nothing may animate behind the phone's glass, or every frame re-blurs the whole screen. */
+.desk-live[data-overlay] .desk-beacon-layer { display: none; }
 @media (max-aspect-ratio: 1/1) {
   .desk-live .iso-svg { width: 118%; margin-left: -9%; }
 }
@@ -131,11 +135,11 @@ html[data-mode="dark"] .desk-hero [data-part="lamp"] [data-material="paper"] {
 }
 .desk-hero .desk-terminal .iso-face-text { fill: #f4f4f2; }
 .desk-hero .desk-accent { fill: #9fbcd9; }
-.desk-hero .desk-moon { fill: #f4ecc8; opacity: 0; transition: opacity .35s; }
+.desk-hero .desk-moon { fill: #f4ecc8; opacity: 0; }
 html[data-mode="dark"] .desk-hero .desk-moon { opacity: 1; }
 html[data-mode="dark"] .desk-hero [data-part="phone"] [data-material="paper"] { --anatomy-top: #f4f4f2; }
 .desk-hero .desk-hit { fill: transparent; pointer-events: all; }
-.desk-hero .desk-glow { fill: #ffdf9e; opacity: 0; pointer-events: none; transition: opacity .35s; }
+.desk-hero .desk-glow { fill: #ffdf9e; opacity: 0; pointer-events: none; }
 html[data-mode="dark"] .desk-hero .desk-glow { opacity: .16; }
 .desk-hero svg a, .desk-hero .desk-action { cursor: pointer; }
 .desk-hero svg a:focus-visible, .desk-hero .desk-action:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }

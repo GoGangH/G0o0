@@ -28,8 +28,10 @@ const readSeen = (): string[] => {
 };
 
 type Run = { id: string; group: string; art: ReactNode };
-export function DeskLive({ runs, width, height, shift, glow, beacons, framePivot, posts }: { runs: Run[]; width: number; height: number; shift: number[]; glow: string; beacons: { id: string; at: number[] }[]; framePivot: number[]; posts: PhonePost[] }) {
+export function DeskLive({ runs, width, height, shift, glow, beacons, framePivot, posts, motion }: { runs: Run[]; width: number; height: number; shift: number[]; glow: string; beacons: { id: string; at: number[] }[]; framePivot: number[]; posts: PhonePost[]; motion: ReactNode }) {
   const [overlay, setOverlay] = useState<"terminal" | "phone" | null>(null);
+  const [labels, setLabels] = useState<{ id: string; x: number; y: number }[]>([]);
+  const [intro, setIntro] = useState(true);
   // null until mounted: what was already clicked lives in localStorage, so nothing blinks before it is read.
   const [seen, setSeen] = useState<string[] | null>(null);
   const anchor = useRef<HTMLDivElement>(null);
@@ -93,6 +95,7 @@ export function DeskLive({ runs, width, height, shift, glow, beacons, framePivot
     const wasMonitor = state.current.active === "monitor";
     state.current.active = active;
     anchor.current?.setAttribute("data-active-part", active);
+    anchor.current?.querySelectorAll<HTMLElement>(".room-label").forEach((label) => label.toggleAttribute("data-show", label.dataset.for === active));
     if (active === "monitor") typeScreen();
     else if (wasMonitor) clearScreen();
     if (active === "phone") wakePhone();
@@ -111,6 +114,27 @@ export function DeskLive({ runs, width, height, shift, glow, beacons, framePivot
     });
     return !calm && s.drawer !== target;
   }, visible && !still);
+  // Labels are HTML so they stay readable at any size; their places come from the drawing's own coordinates.
+  useEffect(() => {
+    const root = anchor.current;
+    const svg = root?.querySelector<SVGSVGElement>("svg.iso-svg");
+    if (!root || !svg) return;
+    const place = () => {
+      const matrix = svg.getScreenCTM();
+      if (!matrix) return;
+      const box = root.getBoundingClientRect();
+      setLabels(beacons.map(({ id, at }) => ({ id, x: matrix.a * at[0] + matrix.c * at[1] + matrix.e - box.left, y: matrix.b * at[0] + matrix.d * at[1] + matrix.f - box.top })));
+    };
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(root);
+    const hide = window.setTimeout(() => setIntro(false), 3600);
+    return () => {
+      observer.disconnect();
+      clearTimeout(hide);
+    };
+  }, [beacons]);
+
   useEffect(() => {
     setSeen(readSeen());
     // Fetched shortly after the room is up, so the first click on the phone or monitor doesn't wait on the network.
@@ -180,7 +204,7 @@ export function DeskLive({ runs, width, height, shift, glow, beacons, framePivot
         }}><title>{hotspot.label}</title>{run.art}</g>;
     });
   }, [runs]);
-  return <div ref={anchor} className="desk-live h-full" data-overlay={overlay ? "" : undefined} style={{ "--frame-x": `${framePivot[0]}px`, "--frame-y": `${framePivot[1]}px` } as CSSProperties}>
+  return <div ref={anchor} className="desk-live h-full" data-overlay={overlay ? "" : undefined} data-labels={intro ? "all" : undefined} style={{ "--frame-x": `${framePivot[0]}px`, "--frame-y": `${framePivot[1]}px` } as CSSProperties}>
     <svg viewBox={`0 0 ${width} ${height}`} className="iso-svg" role="group" aria-label="고강현의 방. 물건을 선택해 둘러보세요">
       {scene}
       <path className="desk-glow" d={glow} />
@@ -191,6 +215,16 @@ export function DeskLive({ runs, width, height, shift, glow, beacons, framePivot
         <circle className="desk-beacon-dot" cx={at[0]} cy={at[1]} r="6" />
       </g>)}
     </svg>
+    <svg viewBox={`0 0 ${width} ${height}`} className="iso-svg desk-beacon-layer desk-motion-layer" aria-hidden="true">{motion}</svg>
+    {labels.map(({ id, x, y }) => {
+      const hotspot = hotspots.find((item) => item.id === id);
+      if (!hotspot) return null;
+      // On touch screens these stay up as tappable name tags; the objects themselves remain the focusable controls.
+      const tag = { className: "room-label", "data-for": id, "data-place": hotspot.place, "aria-hidden": true, tabIndex: -1, style: { left: x, top: y } } as const;
+      return hotspot.href
+        ? <Link key={id} href={hotspot.href} {...tag} onClick={() => markSeen(hotspot.id)}>{hotspot.label}<small>{hotspot.hint}</small></Link>
+        : <button key={id} type="button" {...tag} onClick={() => act(hotspot)}>{hotspot.label}<small>{hotspot.hint}</small></button>;
+    })}
     {overlay === "terminal" && <DeskTerminal onClose={() => setOverlay(null)} />}
     {overlay === "phone" && <DeskPhone onClose={() => setOverlay(null)} posts={posts} />}
   </div>;

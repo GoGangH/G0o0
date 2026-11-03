@@ -3,6 +3,7 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { categoryVinyl } from "@/lib/blog/categories";
 import { Cover } from "./Cover";
 import { playClick, playDrop, playFlip, playNeedle, playPull, setSoundEnabled, soundEnabled, startCrackle, stopCrackle } from "./sound";
 import "./records.css";
@@ -26,8 +27,8 @@ const LAYOUTS = {
     open: { x: 700, y: 34, s: 1 }, rest: { x: 700, y: 412, s: 0.28, step: 112 },
   },
   narrow: {
-    w: 430, h: 540, hOpen: 690, deck: { x: 24, y: 0, s: 0.58 }, pull: [0, -150], nowPlaying: [18, 306], sound: [18, 262], shelf: { idle: [6, 480, 418], open: [25, 676, 380] },
-    shelfRow: { x: 16, y: 350, s: 0.36, step: 134 }, pager: [18, 492],
+    w: 430, h: 566, hOpen: 690, deck: { x: 24, y: 0, s: 0.58 }, pull: [0, -150], nowPlaying: [18, 306], sound: [18, 262], shelf: { idle: [6, 506, 418], open: [25, 676, 380] },
+    shelfRow: { x: 16, y: 376, s: 0.36, step: 134 }, pager: [18, 524],
     open: { x: 35, y: 216, s: 1 }, rest: { x: 35, y: 590, s: 0.24, step: 96 },
   },
 };
@@ -35,18 +36,17 @@ type LayoutName = keyof typeof LAYOUTS;
 
 // Grooves with a wider band between tracks, and a paper label with its small print running round the rim, like a pressed LP.
 function Vinyl({ album, side = "A" }: { album: Album; side?: string }) {
-  const id = useId();
+  const id = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const { kind, base } = categoryVinyl(album.key);
   const count = album.tracks.length;
-  const bands = Array.from({ length: Math.max(0, count - 1) }, (_, index) => 128 - ((index + 1) * 72) / count);
-  return <svg viewBox="-132 -132 264 264" className="rt-vinyl" aria-hidden="true">
+  const bands = Array.from({ length: Math.max(0, count - 1) }, (_, index) => 126 - ((index + 1) * 68) / count);
+  return <svg viewBox="-132 -132 264 264" className="rt-vinyl" aria-hidden="true" data-album={album.key} data-pressing={kind}>
     <defs><path id={id} d="M0-37.5a37.5 37.5 0 1 1-.01 0" /></defs>
-    <circle r="132" fill="#0e0e10" />
-    <circle r="131" fill="none" stroke="#2c2c30" strokeWidth="1.5" />
-    {Array.from({ length: 19 }, (_, index) => 128 - index * 4).map((r) => <circle key={r} r={r} fill="none" stroke="#fff" strokeOpacity={r % 12 === 0 ? 0.11 : 0.05} strokeWidth=".7" />)}
-    {bands.map((r) => <circle key={r} r={r} fill="none" stroke="#000" strokeWidth="2.6" />)}
-    <circle r="50" fill="#141416" />
-    <circle r="45" className="rt-label" data-album={album.key} />
-    <circle r="45" fill="none" stroke="#000" strokeOpacity=".22" />
+    <circle r="132" fill={base} opacity={kind === "translucent" ? 0.68 : 1} />
+    {Array.from({ length: 37 }, (_, index) => 128 - index * 2).map((r) => <circle key={r} r={r} fill="none" stroke={r % 4 === 0 ? "#fff" : "#000"} strokeOpacity={r % 4 === 0 ? 0.1 : 0.08} strokeWidth=".55" />)}
+    {bands.map((r) => <circle key={r} r={r} fill="none" stroke="#000" strokeOpacity=".2" strokeWidth="2" />)}
+    <circle r="131.2" fill="none" stroke="#fff" strokeOpacity=".3" strokeWidth="1.2" />
+    <circle r="45" fill="var(--a-disc)" />
     <text className="rt-label-rim"><textPath href={`#${id}`}>G0O0 RECORDS · {album.catalog} · STEREO · 33⅓ RPM · ALL RIGHTS RESERVED ·</textPath></text>
     <text y="-15" className="rt-label-title">{album.label}</text>
     <text x="-23" y="4" className="rt-label-sub">SIDE {side}</text>
@@ -69,9 +69,9 @@ const NOTE = "M9 0v15.3A4.2 4.2 0 1 0 11 19V6c3 1.5 6 3 6 8 2-7-3-9-8-14z";
 function WallScore() {
   const staff = (y: number, bend: number) => [0, 12, 24, 36, 48].map((offset) => `M-40 ${y + offset}C260 ${y + offset - bend} 560 ${y + offset + bend} 860 ${y + offset}S1240 ${y + offset - bend} 1400 ${y + offset}`).join("");
   return <svg className="rt-score" viewBox="0 0 1360 620" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <path d={staff(80, 60)} fill="none" stroke="#f3ece0" strokeWidth="1" />
-    <path d={staff(430, -50)} fill="none" stroke="#f3ece0" strokeWidth="1" />
-    {[[860, 60, 1.5], [960, 92, 1.3], [1090, 40, 1.6], [1210, 96, 1.2], [700, 74, 1.2], [1130, 420, 1.4], [1250, 462, 1.2]].map(([x, y, k]) => <path key={`${x}${y}`} d={NOTE} fill="#f3ece0" transform={`translate(${x} ${y}) scale(${k})`} />)}
+    <path d={staff(80, 60)} fill="none" stroke="#e6e9ee" strokeWidth="1" />
+    <path d={staff(430, -50)} fill="none" stroke="#e6e9ee" strokeWidth="1" />
+    {[[860, 60, 1.5], [960, 92, 1.3], [1090, 40, 1.6], [1210, 96, 1.2], [700, 74, 1.2], [1130, 420, 1.4], [1250, 462, 1.2]].map(([x, y, k]) => <path key={`${x}${y}`} d={NOTE} fill="#e6e9ee" transform={`translate(${x} ${y}) scale(${k})`} />)}
   </svg>;
 }
 
@@ -378,7 +378,7 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
           const isOpen = open === album.key;
           return <div key={album.key} className="rt-album" data-open={isOpen ? "" : undefined} data-small={open && !isOpen ? "" : undefined} data-hidden={slot.hidden ? "" : undefined} {...(slot.hidden ? { inert: true } : {})} style={{ transform: `translate(${slot.x}px, ${slot.y}px) scale(${slot.s})`, zIndex: isOpen ? 5 : 3 }}>
             <div className="rt-tilt">
-              <div className="rt-peek"><Vinyl album={album} /></div>
+              <div className="rt-peek"><Vinyl album={album} /><div className="rt-disc-sheen" /></div>
               <div className="rt-flip" data-flipped={isOpen ? "" : undefined}>
                 <button type="button" className="rt-face rt-front" aria-expanded={isOpen} aria-label={`${album.label} 앨범, 트랙 ${album.count}개`} onClick={() => openAlbum(album.key)} {...(isOpen ? { inert: true } : {})}>
                   <Cover album={album.key} label={album.label} kind={album.kind} />

@@ -18,7 +18,7 @@ export function BlogExplorer({ posts, render }: { posts: PostMeta[]; render: (po
 
   if (posts.length === 0) {
     return <div className="tl-empty">
-      <svg aria-hidden="true" viewBox="0 0 64 64" width="56" height="56"><circle cx="32" cy="32" r="30" fill="#0e0e10" stroke="#3a332a" /><circle cx="32" cy="32" r="20" fill="none" stroke="#2a2520" /><circle cx="32" cy="32" r="10" fill="#ffb454" /><circle cx="32" cy="32" r="1.5" fill="#0e0e10" /></svg>
+      <svg aria-hidden="true" viewBox="0 0 64 64" width="56" height="56"><circle cx="32" cy="32" r="30" fill="#0e0e10" stroke="#3a3d42" /><circle cx="32" cy="32" r="20" fill="none" stroke="#2a2d32" /><circle cx="32" cy="32" r="10" fill="#dfe5ec" /><circle cx="32" cy="32" r="1.5" fill="#0e0e10" /></svg>
       <p className="text-lg font-semibold">아직 발매된 트랙이 없습니다</p>
       <p className="mt-1 text-sm text-muted">첫 트랙을 녹음하고 있어요.</p>
     </div>;

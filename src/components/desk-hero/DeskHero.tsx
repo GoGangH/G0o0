@@ -2,6 +2,7 @@ import "../iso/iso.css";
 import "./desk-hero.css";
 import { DeskArt } from "./DeskArt";
 import { DeskLive } from "./DeskLive";
+import { DeskMotion } from "./DeskMotion";
 import type { PhonePost } from "./PhoneScreens";
 import { beacons, drawerShift, framePivot, H, lampGlow, sortedParts, W, type DeskPart } from "./geometry";
 
@@ -13,6 +14,6 @@ export function DeskHero({ posts }: { posts: PhonePost[] }) {
     else runs.push({ id: part.name, group: part.group, parts: [part] });
   }
   return <div className="desk-hero iso h-full" data-theme="light">
-    <DeskLive width={W} height={H} shift={drawerShift} glow={lampGlow} beacons={beacons} framePivot={framePivot} posts={posts} runs={runs.map((run) => ({ id: run.id, group: run.group, art: <DeskArt key={run.id} parts={run.parts} /> }))} />
+    <DeskLive width={W} height={H} shift={drawerShift} glow={lampGlow} beacons={beacons} framePivot={framePivot} posts={posts} motion={<DeskMotion />} runs={runs.map((run) => ({ id: run.id, group: run.group, art: <DeskArt key={run.id} parts={run.parts} /> }))} />
   </div>;
 }

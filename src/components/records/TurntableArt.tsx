@@ -1,8 +1,31 @@
 import { Solid } from "../iso/react/draw";
-import { bodyParts, DECK_H, DECK_W, fittings, fittingsAbove, plateMatrix, tableMatrix, tablePart, platterCenter, platterTopMatrix, pivotPlate, startKeyMatrix, type DeckPart } from "./deck";
+import { bodyParts, DECK_H, DECK_W, fittings, fittingsAbove, planeAt, plateMatrix, TOP, tableMatrix, tablePart, platterCenter, platterTopMatrix, pivotPlate, startKeyMatrix, type DeckPart } from "./deck";
 
 const matrix = (values: number[]) => `matrix(${values.join(" ")})`;
-const Parts = ({ parts }: { parts: DeckPart[] }) => <>{parts.map((part) => <g key={part.name} data-m={part.material}><Solid paths={part.paths} tone={part.tone} crease="none" /></g>)}</>;
+
+// Spun metal: light gathers in two opposing fans around the centre, the way it does on a turned aluminium cap.
+function fan(from: number, to: number, outer: number, inner: number) {
+  const point = (radius: number, degrees: number) => `${(radius * Math.cos((degrees * Math.PI) / 180)).toFixed(2)} ${(radius * Math.sin((degrees * Math.PI) / 180)).toFixed(2)}`;
+  return `M${point(inner, from)}L${point(outer, from)}A${outer} ${outer} 0 0 1 ${point(outer, to)}L${point(inner, to)}A${inner} ${inner} 0 0 0 ${point(inner, from)}Z`;
+}
+function Spun({ at, z, outer, inner = 0 }: { at: [number, number]; z: number; outer: number; inner?: number }) {
+  const fans = [[-62, -32, "#fff", 0.82], [-32, -14, "#fff", 0.32], [118, 148, "#fff", 0.7], [148, 168, "#fff", 0.26], [20, 62, "#000", 0.2], [200, 244, "#000", 0.2]] as const;
+  const rings = Math.min(7, Math.max(2, Math.floor((outer - inner) / 4)));
+  return <g className="rt-flat" transform={matrix(planeAt(at, z))}>
+    {fans.map(([from, to, color, opacity]) => <path key={from} d={fan(from, to, outer - 0.4, inner)} fill={color} opacity={opacity} />)}
+    {Array.from({ length: rings }, (_, i) => <circle key={i} r={inner + ((outer - inner) * (i + 1)) / (rings + 1)} fill="none" stroke="#000" strokeOpacity=".08" strokeWidth=".5" />)}
+  </g>;
+}
+const SPUN: Record<string, { at: [number, number]; z: number; outer: number; inner?: number }> = {
+  adapter: { at: [-204, -144], z: TOP + 2, outer: 23, inner: 7 },
+  "arm-base": { at: [176, -122], z: TOP + 9, outer: 31, inner: 13 },
+  "skate-cap": { at: [210, -94], z: TOP + 14, outer: 6 },
+  light: { at: [92, 150], z: TOP + 27, outer: 7.5 },
+};
+const Parts = ({ parts }: { parts: DeckPart[] }) => <>{parts.map((part) => <g key={part.name} data-m={part.material}>
+  <Solid paths={part.paths} tone={part.tone} crease="none" />
+  {SPUN[part.name] && <Spun {...SPUN[part.name]} />}
+</g>)}</>;
 const tilt = [...plateMatrix.slice(0, 4), 0, 0].join(" ");
 const PITCH = [-8, -6, -4, -2, 0, 2, 4, 6, 8];
 
@@ -17,20 +40,33 @@ export function TurntableArt() {
       <pattern id="rt-plate" patternUnits="userSpaceOnUse" width="520" height="400" patternTransform={`matrix(${tilt})`}>
         <rect width="520" height="400" fill="#cbccc8" /><rect width="520" height="400" filter="url(#rt-brush)" />
       </pattern>
-      {/* Long, wandering grain for the walnut table, and darker cathedral streaks over it. */}
-      <filter id="rt-grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".0035 .085" numOctaves="4" seed="11" stitchTiles="stitch" /><feColorMatrix values="0 0 0 0 .07 0 0 0 0 .035 0 0 0 0 .01 1.5 0 0 0 -.5" /></filter>
-      <filter id="rt-pores" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".02 .8" numOctaves="2" seed="7" stitchTiles="stitch" /><feColorMatrix values="0 0 0 0 .05 0 0 0 0 .02 0 0 0 0 0 1.2 0 0 0 -.55" /></filter>
-      <pattern id="rt-wood" patternUnits="userSpaceOnUse" width="1100" height="500" patternTransform={`matrix(${tilt})`}>
-        <rect width="1100" height="500" fill="#6a412a" /><rect width="1100" height="500" filter="url(#rt-grain)" /><rect width="1100" height="500" filter="url(#rt-pores)" />
-      </pattern>
+      {/* Black lacquer: a long, soft highlight across the table. */}
+      <linearGradient id="rt-table" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="#0b0c0e" /><stop offset=".3" stopColor="#1a1c21" /><stop offset=".42" stopColor="#2c2f35" /><stop offset=".55" stopColor="#15171a" /><stop offset="1" stopColor="#090a0c" />
+      </linearGradient>
+      {/* Polished metal: hard bands of light and dark instead of one flat grey. */}
+      <linearGradient id="rt-metal" x1="0" y1="0" x2="1" y2=".45">
+        <stop offset="0" stopColor="#ffffff" /><stop offset=".2" stopColor="#bfc2c7" /><stop offset=".42" stopColor="#f5f6f7" /><stop offset=".62" stopColor="#8f9298" /><stop offset=".82" stopColor="#dcdfe3" /><stop offset="1" stopColor="#ffffff" />
+      </linearGradient>
+      <linearGradient id="rt-metal-side" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stopColor="#55585e" /><stop offset=".22" stopColor="#f4f5f6" /><stop offset=".4" stopColor="#8e9197" /><stop offset=".68" stopColor="#d6d9dd" /><stop offset="1" stopColor="#4d5056" />
+      </linearGradient>
+      {/* A broad reflection travelling across the brushed top plate. */}
+      <linearGradient id="rt-sweep" gradientUnits="userSpaceOnUse" x1="-236" y1="-176" x2="236" y2="176">
+        <stop offset="0" stopColor="#fff" stopOpacity=".05" /><stop offset=".26" stopColor="#fff" stopOpacity=".5" /><stop offset=".36" stopColor="#fff" stopOpacity="0" /><stop offset=".6" stopColor="#000" stopOpacity=".16" /><stop offset=".78" stopColor="#fff" stopOpacity=".26" /><stop offset="1" stopColor="#000" stopOpacity=".1" />
+      </linearGradient>
+      <radialGradient id="rt-pool"><stop offset="0" stopColor="#dfe6ef" stopOpacity=".2" /><stop offset="1" stopColor="#dfe6ef" stopOpacity="0" /></radialGradient>
       <filter id="rt-contact" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="14" /></filter>
     </defs>
     <Parts parts={[tablePart]} />
     <g className="rt-flat" transform={matrix(tableMatrix)}>
-      <rect x="-246" y="-176" width="492" height="372" rx="20" fill="#000" opacity=".6" filter="url(#rt-contact)" />
+      <circle cx="10" cy="10" r="430" fill="url(#rt-pool)" />
+      <rect x="-246" y="-176" width="492" height="372" rx="20" fill="#000" opacity=".85" filter="url(#rt-contact)" />
     </g>
     <Parts parts={bodyParts} />
     <g className="rt-flat" transform={matrix(plateMatrix)}>
+      <rect x="-236" y="-176" width="472" height="352" rx="8" fill="url(#rt-sweep)" />
+      <rect x="-234.5" y="-174.5" width="469" height="349" rx="7" fill="none" stroke="#fff" strokeOpacity=".75" strokeWidth=".9" />
       <circle cx={platterCenter[0]} cy={platterCenter[1]} r="156" fill="#1a1a1c" />
       <circle cx={platterCenter[0]} cy={platterCenter[1]} r="156" fill="none" stroke="#f1f1ee" strokeOpacity=".7" strokeWidth="1" />
       <circle cx={pivotPlate[0]} cy={pivotPlate[1]} r="50" fill="#141416" />

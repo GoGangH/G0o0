@@ -7,10 +7,10 @@ export const DISC_RADIUS = 132;
 
 const P: Projection = { origin: [DECK_W / 2 + 6, DECK_H * 0.53], scale: 1, azimuth: 40, elevation: 36 };
 const BASE_H = 24, TRIM_H = 6, PLATE_H = 4;
-const TOP = BASE_H + TRIM_H + PLATE_H;
+export const TOP = BASE_H + TRIM_H + PLATE_H;
 const PLATTER: [number, number] = [-52, 2];
 const PIVOT: [number, number] = [176, -122];
-const PLATTER_H = 14;
+export const PLATTER_H = 14;
 
 export type DeckPart = { name: string; material: string; tone: Tone; paths: ReturnType<typeof slabOf> };
 const part = (name: string, material: string, paths: DeckPart["paths"], tone: Tone = "hi"): DeckPart => ({ name, material, tone, paths });
@@ -21,7 +21,7 @@ const feet = [[-192, 138], [192, 138], [-192, -138], [192, -138]];
 const START: Plan = { x: -222, y: 122, w: 54, d: 36, r: 3 };
 
 // The walnut table the deck stands on; it runs off the stage to the left and front.
-export const tablePart = slab("table", "wood", { x: -760, y: -250, w: 1090, d: 1100, r: 10 }, -44, 26);
+export const tablePart = slab("table", "table", { x: -760, y: -250, w: 1090, d: 1100, r: 10 }, -44, 26);
 export const tableMatrix = planeAt([0, 0], -18);
 
 export const bodyParts: DeckPart[] = [
@@ -46,7 +46,7 @@ export const fittings: DeckPart[] = [
   round("platter", "rubber", PLATTER[0], PLATTER[1], 152, TOP, PLATTER_H, 96),
 ];
 export const fittingsAbove: DeckPart[] = [
-  round("mat", "rubber", PLATTER[0], PLATTER[1], 138, TOP + PLATTER_H, 1, 96),
+  round("mat", "mat", PLATTER[0], PLATTER[1], 138, TOP + PLATTER_H, 1, 96),
   round("spindle", "metal", PLATTER[0], PLATTER[1], 3, TOP + PLATTER_H + 1, 7, 12),
   round("dial-collar", "metal", -205, 88, 16, TOP, 14),
   round("dial", "rubber", -205, 88, 13, TOP + 14, 7),
@@ -60,7 +60,7 @@ export const fittingsAbove: DeckPart[] = [
 ];
 
 // Maps a flat layer lying on the deck at height z into the drawing, as matrix() numbers.
-function planeAt([x, y]: [number, number], z: number) {
+export function planeAt([x, y]: [number, number], z: number) {
   const origin = iso([x, y, z], P);
   const along = (dx: number, dy: number) => {
     const point = iso([x + dx, y + dy, z], P);

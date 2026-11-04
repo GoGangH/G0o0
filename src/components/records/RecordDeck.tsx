@@ -219,7 +219,7 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
     // The cover that had focus just went inert, so hand focus to the back of the sleeve.
     root.current?.querySelector<HTMLElement>(".rt-album[data-open] .rt-track, .rt-album[data-open] .rt-close")?.focus({ preventScroll: true });
     const close = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(null);
+      if (event.key === "Escape") closeAlbum();
     };
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
@@ -278,6 +278,15 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
     playFlip();
     setOpen(key);
   };
+  const closeAlbum = () => {
+    playFlip();
+    setOpen(null);
+  };
+  // With a sleeve out, a click on it or on empty stage that isn't a control slides it back onto the shelf.
+  const putBack = (event: MouseEvent) => {
+    if (!open || (event.target as Element).closest("a, button, [role=button], input")) return;
+    closeAlbum();
+  };
 
   const go = () => {
     const href = pendingHref.current;
@@ -334,10 +343,10 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
         <h1 className="rt-title">{title}</h1>
         <p className="rt-desc">{description}</p>
       </div>
-      <p className="rt-hint-top" aria-hidden="true">앨범을 고르고, 트랙을 눌러 재생하세요</p>
+      <p className="rt-hint-top" aria-hidden="true">{open ? "트랙을 눌러 재생하거나, 앨범을 한 번 더 누르면 다시 넣어요" : "앨범을 고르고, 트랙을 눌러 재생하세요"}</p>
     </div>
 
-    <div className="rt-frame" style={{ height: scale ? (open ? layout.hOpen : layout.h) * scale : undefined, visibility: scale ? "visible" : "hidden" }}>
+    <div className="rt-frame" onClick={putBack} data-sleeve-out={open ? "" : undefined} style={{ height: scale ? (open ? layout.hOpen : layout.h) * scale : undefined, visibility: scale ? "visible" : "hidden" }}>
       <div className="rt-stage" style={{ width: layout.w, height: layout.h, transform: `translateX(-50%) scale(${scale ?? 1})` }}>
         <div className="rt-art" style={{ transform: `translate(${layout.deck.x}px, ${layout.deck.y}px) scale(${layout.deck.s})` }}>{art}</div>
 
@@ -406,7 +415,9 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
                   </div>
                   {album.tracks[0] && <p className="rt-notes"><strong>LINER NOTES</strong> {album.tracks[0].summary}</p>}
                   <div className="rt-sleeve-foot">
-                    <button type="button" className="rt-close" aria-label="앞면으로 뒤집기" onClick={() => setOpen(null)}>← 앞면</button>
+                    <button type="button" className="rt-close" aria-label="앞면으로 뒤집기" title="앞면으로" onClick={closeAlbum}>
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.7M20 4v4.7h-4.7M20 12a8 8 0 0 1-13.7 5.6L4 15.3M4 20v-4.7h4.7" /></svg>
+                    </button>
                     <Link href={`/blog/category/${album.key}`} className="rt-sleeve-album">{album.count > album.tracks.length ? `트랙 ${album.count}개 전체 보기 →` : "앨범 페이지 →"}</Link>
                   </div>
                   <span className="rt-wear" aria-hidden="true" />

@@ -18,7 +18,7 @@ export function projectsCommand(): CommandOutput[] {
       type: "output",
     });
     output.push({
-      content: `    <span class='text-gray-500'>${project.period}</span>`,
+      content: `    <span class='text-gray-500'>${project.type}</span>`,
       type: "dim",
     });
     output.push({ content: "", type: "output" });
@@ -51,7 +51,7 @@ export function projectDetailCommand(id: number): CommandOutput[] {
     { content: "", type: "output" },
     { content: `<span class='text-gray-300'>${project.description}</span>`, type: "output" },
     { content: "", type: "output" },
-    { content: `<span class='text-gray-500'>Period:</span> <span class='text-white'>${project.period}</span>`, type: "output" },
+    { content: `<span class='text-gray-500'>Type:</span> <span class='text-white'>${project.type}</span>`, type: "output" },
     { content: "", type: "output" },
     { content: `<span class='text-gray-500'>Tech Stack:</span>`, type: "output" },
     { content: `  ${project.tech.map((t) => `<span class='text-green-400'>${t}</span>`).join(" · ")}`, type: "output" },

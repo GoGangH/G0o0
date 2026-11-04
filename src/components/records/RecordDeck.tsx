@@ -27,9 +27,9 @@ const LAYOUTS = {
     open: { x: 700, y: 34, s: 1 }, rest: { x: 700, y: 412, s: 0.28, step: 112 },
   },
   narrow: {
-    w: 430, h: 566, hOpen: 690, deck: { x: 24, y: 0, s: 0.58 }, pull: [0, -150], nowPlaying: [18, 306], sound: [18, 262], shelf: { idle: [6, 506, 418], open: [25, 676, 380] },
+    w: 430, h: 566, hOpen: 832, deck: { x: 24, y: 0, s: 0.58 }, pull: [0, -150], nowPlaying: [18, 306], sound: [18, 262], shelf: { idle: [6, 506, 418], open: [25, 818, 380] },
     shelfRow: { x: 16, y: 376, s: 0.36, step: 134 }, pager: [18, 524],
-    open: { x: 35, y: 216, s: 1 }, rest: { x: 35, y: 590, s: 0.24, step: 96 },
+    open: { x: 35, y: 352, s: 1 }, rest: { x: 35, y: 732, s: 0.24, step: 96 },
   },
 };
 type LayoutName = keyof typeof LAYOUTS;
@@ -64,16 +64,6 @@ function Disc({ album, matrix, className, style }: { album: Album; matrix: Matri
 }
 
 const NOTE = "M9 0v15.3A4.2 4.2 0 1 0 11 19V6c3 1.5 6 3 6 8 2-7-3-9-8-14z";
-
-// Staves curving across the wall, faint, with a few notes sitting on them.
-function WallScore() {
-  const staff = (y: number, bend: number) => [0, 12, 24, 36, 48].map((offset) => `M-40 ${y + offset}C260 ${y + offset - bend} 560 ${y + offset + bend} 860 ${y + offset}S1240 ${y + offset - bend} 1400 ${y + offset}`).join("");
-  return <svg className="rt-score" viewBox="0 0 1360 620" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <path d={staff(80, 60)} fill="none" stroke="#e6e9ee" strokeWidth="1" />
-    <path d={staff(430, -50)} fill="none" stroke="#e6e9ee" strokeWidth="1" />
-    {[[860, 60, 1.5], [960, 92, 1.3], [1090, 40, 1.6], [1210, 96, 1.2], [700, 74, 1.2], [1130, 420, 1.4], [1250, 462, 1.2]].map(([x, y, k]) => <path key={`${x}${y}`} d={NOTE} fill="#e6e9ee" transform={`translate(${x} ${y}) scale(${k})`} />)}
-  </svg>;
-}
 
 // A tube, gimbal and counterweight seen from above; the deck's own matrix lays them on the plate.
 function Tonearm({ down }: { down: boolean }) {
@@ -148,7 +138,7 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
     if (!element) return;
     const measure = () => {
       const width = element.clientWidth;
-      const name: LayoutName = width < 760 ? "narrow" : "wide";
+      const name: LayoutName = width < 900 ? "narrow" : "wide";
       setLayoutName(name);
       setScale(Math.min(width / LAYOUTS[name].w, name === "wide" ? 1.15 : 1.4));
     };
@@ -337,7 +327,8 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
       go();
     }
   }}>
-    <div className="rt-wall" aria-hidden="true"><WallScore /></div>
+    {/* Like Apple Music's now-playing screen: the colours of the record on the deck, blown up and drifting behind everything. */}
+    <div className="rt-wall" aria-hidden="true"><div className="rt-ambient" data-album={playing?.album.key}><i /><i /><i /></div></div>
     <div className="site-width rt-heading">
       <div>
         <h1 className="rt-title">{title}</h1>

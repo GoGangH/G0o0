@@ -15,7 +15,6 @@ export function profileCommand(): CommandOutput[] {
     { content: "", type: "output" },
     { content: `📞 <span class='text-white'>${profile.phone}</span>`, type: "output" },
     { content: `📧 <a href='mailto:${profile.email}' class='text-blue-400 hover:underline'>${profile.email}</a>`, type: "output" },
-    { content: `📍 <span class='text-white'>${profile.location}</span>`, type: "output" },
     { content: `🎓 <span class='text-white'>${profile.education}</span>`, type: "output" },
     { content: "", type: "output" },
     { content: `🔗 <a href='${profile.github}' target='_blank' class='text-blue-400 hover:underline'>GitHub</a> · <a href='${profile.linkedin}' target='_blank' class='text-blue-400 hover:underline'>LinkedIn</a>`, type: "output" },

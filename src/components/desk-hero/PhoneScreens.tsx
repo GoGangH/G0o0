@@ -66,6 +66,7 @@ function ProjectScreen({ project, posts }: { project: PhoneProject; posts: Phone
     <dl className="app-metrics">
       {project.metrics.map(({ value, label }) => <div key={label}><dd>{value}</dd><dt>{label}</dt></div>)}
     </dl>
+    {project.highlight && <div className="app-card app-prose">✓ {project.highlight}</div>}
     <p className="app-section-label">어떤 서비스인가</p>
     <div className="app-card app-prose">{project.description}</div>
     <p className="app-section-label">내가 한 일</p>
@@ -89,6 +90,7 @@ function ExperienceScreen({ experience }: { experience: PhoneExperience }) {
     <Hero name={experience.name} position={experience.position} period={experience.period} letter={experience.letter} tint={experience.tint} image={experience.image} inset={experience.inset} />
     <p className="app-section-label">내가 한 일</p>
     <div className="app-card app-prose"><ul>{experience.items.map((item) => <li key={item}>{item}</li>)}</ul></div>
+    {experience.highlight && <div className="app-card app-prose">✓ {experience.highlight}</div>}
   </>;
 }
 

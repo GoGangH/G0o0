@@ -1,9 +1,12 @@
+// Mirrors the 개인 프로젝트 section of the resume. Work projects live in career.ts.
+
 export interface Project {
   id: number;
   name: string;
+  /** What kind of thing it is, as the resume labels it: 웹 앱, 모바일 앱 … */
+  type: string;
   description: string;
   tech: string[];
-  period: string;
   links?: { label: string; url: string }[];
   details: string[];
 }
@@ -11,61 +14,62 @@ export interface Project {
 export const projects: Project[] = [
   {
     id: 1,
-    name: "Grapic - 커뮤니티 콘텐츠 수집/운영 어드민",
-    description: "커뮤니티 콘텐츠 수집 서버와 정산·회원 권한·포스팅 관리 어드민 개발",
-    tech: ["TypeScript", "Node.js", "React", "Docker"],
-    period: "2025.07 ~ 2025.09",
-    details: [
-      "커뮤니티별 페이지 구조를 분석해 제목, 본문, 이미지를 추출하는 수집 서버 개발",
-      "운영자가 URL만 입력하면 수집 결과를 기존 서비스 포스팅 형식으로 변환해 등록하도록 API 연동",
-      "정산 내역 확인, 회원 권한 변경, 포스팅 상태 수정이 가능한 관리 API와 어드민 화면 개발",
-      "정산, 회원 권한, 포스팅 상태 등 3개 운영 영역을 개발자의 DB 직접 수정 없이 관리할 수 있도록 개선",
-    ],
+    name: "투디니",
+    type: "웹 앱",
+    description: "게임형 투자 학습",
+    tech: ["Kotlin", "Spring Boot", "Kafka", "Kubernetes", "React", "Docker"],
+    details: ["투자 학습의 진입장벽을 낮추고 실제 거래 구조·대규모 데이터 처리를 학습하기 위해 개발 중인 모의투자 서비스. Kubernetes 파드별로 성향이 다른 가상 투자자를 구성하고 수를 조절해 초기 거래 부족에 대응하며, 뉴스에 반응하는 투자와 가격 변화를 간접 체험하도록 구현 중. 토스 인앱 출시 목표."],
   },
   {
     id: 2,
-    name: "Hashscape · Salt Hub",
-    description: "Telegram 미니앱 기반 포인트 파밍, 퀘스트, 친구 초대, 게임, 토큰 드롭 이벤트 서비스",
-    tech: ["TypeScript", "NestJS", "Next.js", "MongoDB", "Redis", "Telegram Bot API", "AWS"],
-    period: "2024.07 ~ 2025.02",
-    details: [
-      "인증, 사용자, 포인트, 퀘스트, 초대, 게임 API와 웹 화면 개발",
-      "누적 사용자 40만 명 이상, MAU 2,000~3,000명을 기록해 후속 거래 서비스의 시장성과 초기 사용자 기반 검증",
-      "게임 점수를 Redis에 임시 누적하고 종료 요청에서 최종 점수만 MongoDB에 저장해 반복 DB 쓰기 감소",
-      "MongoDB Atlas 복제 지연으로 발생한 가입 직후 조회 실패를 writeConcern majority 적용으로 제거",
-      "초대, 가입, 게임 이용 등 3개 핵심 마케팅 지표를 실시간 조회하고 PDF로 공유하는 어드민 개발",
-      "이벤트, 배너, 알림 등 운영 기능을 배포 없이 비개발자가 직접 변경할 수 있도록 구축",
-    ],
+    name: "Jobgil",
+    type: "웹 서비스",
+    description: "취업 준비 통합",
+    tech: ["TypeScript", "NestJS", "Next.js", "PostgreSQL(Supabase)", "Docker"],
+    links: [{ label: "jobgil.com", url: "https://jobgil.com" }],
+    details: ["취업 준비가 여러 도구에 흩어지는 불편을 줄이고자 공고 수집·기업/직무 분석·이력서 피드백·전형 관리·아침 알림을 연결한 서비스. 약 6개월간 직접 사용, 배포 후 약 10명의 사용자 피드백을 반영해 개선 중."],
   },
   {
     id: 3,
-    name: "Hashscape · Solthumb",
-    description: "Solana, Hedera, BSC, Ethereum 밈 토큰 거래와 자산·거래 내역·추천 보상 관리 서비스",
-    tech: ["TypeScript", "NestJS", "React Native", "MongoDB", "Redis", "BullMQ", "Decimal.js"],
-    period: "2025.02 ~ 2025.07",
-    details: [
-      "백엔드 전반과 아키텍처 의사결정을 주도하고 체인별 거래, 송금, 수신, 보상 처리 API 개발",
-      "4개 네트워크의 서로 다른 거래 기록을 분석해 매수, 매도, 송금, 수신, 보상 여부를 판별하고 하나의 이력 스키마로 통합",
-      "거래 식별값과 사용자 정보를 BullMQ 영속 작업으로 먼저 등록해 서버 재시작 후에도 후속 분석을 복구하도록 설계",
-      "외부 데이터 지연에 최대 10회 재시도하고 최종 실패 작업을 별도로 남겨 오프체인 이력 누락 가능성 감소",
-      "가격 수집 서버를 서비스 API와 분리하고 Redis로 작업 실행 상태를 관리해 중복 수집 제한",
-      "거래 식별값과 사용자 ID 기준 upsert, Decimal.js 계산으로 보유 수량·평균 매수가·평가 금액·수익률 제공",
-      "Salt Hub 사용자 성과와 Solthumb 멀티체인 제품 로드맵을 기반으로 Hedera 재단 개발 그랜트 계약 체결에 기여",
-    ],
+    name: "DevMate",
+    type: "macOS 데스크톱 앱",
+    description: "AI 개발 환경 통합",
+    tech: ["TypeScript", "Bun", "Tauri", "Rust"],
+    details: ["AI마다 작업 맥락과 진행 상황을 따로 관리하는 번거로움을 줄이는 도구. 한 세션에서 여러 AI를 사용하며 토큰·컨텍스트·병렬 작업·Git·Issue·할 일 통합 관리."],
   },
   {
     id: 4,
-    name: "Nexters · Logit",
-    description: "취업 준비생의 경험 구조화, 자기소개서 문항별 경험 추천, MCP 연동 서비스",
-    tech: ["Python", "FastAPI", "PostgreSQL", "Redis", "Qdrant", "OpenAI API", "FastMCP", "Next.js", "Prisma", "Docker", "Caddy"],
-    period: "2026.01 ~ 2026.03",
-    details: [
-      "BE 리드로 백엔드 아키텍처와 API 규칙을 정하고 인증, 경험, 지원 프로젝트, 문항, 채팅 서버 개발",
-      "문항 60%, 직무 25%, 회사 15% 점수 결합과 경험 태그 Jaccard 유사도, 역량 카테고리 보정을 적용한 RAG 추천 로직 개발",
-      "SQLAlchemy 비동기 세션과 asyncpg로 DB 접근 방식을 통일하고 Alembic으로 스키마 변경 관리",
-      "테스트 DB 의존성 주입과 외부 API mock을 구성해 4개 테스트 모듈에 59개 자동화 테스트 구축",
-      "경험 검색·저장, 문항별 경험 선택, 지원 프로젝트 조회 등 MCP 도구 10개 구현",
-      "dev/prod 환경과 사용자, 프로젝트, 문항, 경험, 채팅 5개 운영 영역을 하나의 어드민에서 관리하도록 개발",
-    ],
+    name: "하루 한 개 면접 질문",
+    type: "모바일 앱",
+    description: "맞춤 면접 학습",
+    tech: ["React Native", "Python", "FastAPI", "Supabase", "pgvector", "Docker", "Caddy", "RAG"],
+    details: ["이력서·직무·경험을 RAG로 참조해 매일의 맞춤 질문과 음성·텍스트 답변 피드백을 연결하는 모바일 면접 학습 서비스."],
+  },
+  {
+    id: 5,
+    name: "일단옴",
+    type: "웹 서비스",
+    description: "모임 관리",
+    tech: ["TypeScript", "Next.js", "Supabase", "PostgreSQL", "Tailwind CSS"],
+    links: [{ label: "jsu.g0o0.com", url: "https://jsu.g0o0.com" }],
+    details: ["스터디 기록·일정·피드백이 흩어지는 문제를 줄이고자 모임 전 주간 기록·일정 조율과 모임 후 익명 피드백을 모은 서비스."],
+  },
+  {
+    id: 6,
+    name: "트리 학습 사이트",
+    type: "웹 학습 도구",
+    description: "트리 학습 시각화",
+    tech: ["TypeScript", "Next.js", "React", "Tailwind CSS", "Canvas API", "Vercel"],
+    links: [{ label: "tree.g0o0.com", url: "https://tree.g0o0.com" }],
+    details: ["수업 중 트리를 직접 그려 연습하고 정답을 확인하는 어려움을 줄이고자 트리 구성·결과 확인·연습을 지원하는 웹 도구 개발·공유. 현재도 교수님이 수업에서 소개·활용 중. 활용 학기에 80점 이상 학생 수가 기존 대비 30% 이상 증가했다는 피드백 수신."],
+  },
+  {
+    id: 7,
+    name: "자격증 CBT",
+    type: "문제풀이 서비스",
+    description: "자격증 학습",
+    tech: ["TypeScript", "Next.js", "React", "Tailwind CSS", "Vercel"],
+    links: [{ label: "eip.g0o0.com", url: "https://eip.g0o0.com" }],
+    details: ["자격증 공부 중 직접 개발한 CBT 문제풀이 서비스. 커뮤니티에 공유해 다른 사람도 사용하고 피드백을 남길 수 있도록 공개."],
   },
 ];

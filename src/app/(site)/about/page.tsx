@@ -13,6 +13,7 @@ export default function AboutPage() {
         </header>
         <div className="max-w-[660px]">
           <div className="space-y-6 text-[16px] leading-[1.95] sm:text-[17px]">
+            <p className="font-semibold">{profile.bio[0]}</p>
             {profile.bio.slice(1).map((text) => <p key={text}>{text}</p>)}
           </div>
           <dl className="mt-10 grid gap-3 border-t border-rule pt-6 text-sm leading-7 sm:grid-cols-[64px_1fr]">

@@ -1,5 +1,5 @@
 import { CommandOutput } from "./index";
-import { career } from "@/data/career";
+import { career, careerTitle } from "@/data/career";
 
 export function careerCommand(): CommandOutput[] {
   const output: CommandOutput[] = [
@@ -10,7 +10,7 @@ export function careerCommand(): CommandOutput[] {
 
   career.forEach((item, index) => {
     output.push({
-      content: `<span class='text-white font-bold'>${item.company}</span>`,
+      content: `<span class='text-white font-bold'>${careerTitle(item)}</span>${item.summary ? ` <span class='text-gray-400'>${item.summary}</span>` : ""}`,
       type: "output",
     });
     output.push({
@@ -23,9 +23,11 @@ export function careerCommand(): CommandOutput[] {
     });
     output.push({ content: "", type: "output" });
 
-    item.description.forEach((desc) => {
-      output.push({ content: `  • <span class='text-gray-300'>${desc}</span>`, type: "output" });
+    item.sections.forEach((section) => {
+      output.push({ content: `  <span class='text-yellow-400'>${section.title}</span>`, type: "output" });
+      section.items.forEach((text) => output.push({ content: `    • <span class='text-gray-300'>${text}</span>`, type: "output" }));
     });
+    if (item.highlight) output.push({ content: `  ✓ <span class='text-cyan-400'>${item.highlight}</span>`, type: "output" });
 
     if (index < career.length - 1) {
       output.push({ content: "", type: "output" });

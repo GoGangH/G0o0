@@ -1,37 +1,38 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { resumeFiles, type ResumeLang } from "@/data/resume";
 
 export default function ResumePage() {
-  return (
-    <div className="fixed inset-0 bg-gray-100 z-50 flex flex-col">
-      <div className="print:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center shadow-sm">
-        <div className="flex items-center gap-4">
-          <Link
-            href="/"
-            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded text-sm transition-colors"
-          >
-            Back to Home
-          </Link>
-          <h2 className="text-gray-800 font-semibold hidden sm:block">
-            고강현 이력서
-          </h2>
-        </div>
-        <a
-          href="/resume/goganghyun_resume.pdf"
-          target="_blank"
-          rel="noreferrer"
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm transition-colors"
-        >
-          Download PDF
-        </a>
-      </div>
+  const [lang, setLang] = useState<ResumeLang>("ko");
+  // ?lang=en opens the English copy, so either version can be linked directly.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("lang") === "en") setLang("en");
+  }, []);
+  const choose = (next: ResumeLang) => {
+    setLang(next);
+    window.history.replaceState(null, "", next === "en" ? "?lang=en" : window.location.pathname);
+  };
+  const file = resumeFiles[lang];
 
-      <iframe
-        title="고강현 이력서"
-        src="/resume/ably-backend-resume.html"
-        className="flex-1 w-full border-0 bg-white"
-      />
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col bg-[#2a2c30]">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-[#16171a] px-4 py-3 text-sm text-white">
+        <div className="flex items-center gap-4">
+          <Link href="/" className="rounded-lg px-3 py-2 text-white/80 transition-colors hover:bg-white/10 hover:text-white">← 방으로</Link>
+          <h1 className="hidden font-semibold sm:block">{lang === "ko" ? "고강현 이력서" : "Kanghyun Ko · Resume"}</h1>
+        </div>
+        <div className="flex items-center gap-2">
+          <div role="group" aria-label="이력서 언어" className="flex rounded-lg bg-white/10 p-1">
+            {(Object.keys(resumeFiles) as ResumeLang[]).map((key) => <button key={key} type="button" aria-pressed={lang === key} onClick={() => choose(key)}
+              className={`rounded-md px-3 py-1.5 font-medium transition-colors ${lang === key ? "bg-white text-black" : "text-white/75 hover:text-white"}`}>{resumeFiles[key].label}</button>)}
+          </div>
+          <a href={file.href} target="_blank" rel="noreferrer" className="rounded-lg px-3 py-2 text-white/80 transition-colors hover:bg-white/10 hover:text-white">새 창 ↗</a>
+          <a href={file.href} download={file.download} className="rounded-lg bg-white px-3 py-2 font-semibold text-black transition-colors hover:bg-white/85">PDF 받기</a>
+        </div>
+      </div>
+      <iframe key={lang} title={file.label} src={`${file.href}#view=FitH&navpanes=0`} className="w-full flex-1 border-0" />
     </div>
   );
 }

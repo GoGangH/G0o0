@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from "react";
 import Link from "next/link";
+import { HiddenAdminEntry } from "@/components/admin/HiddenAdminEntry";
 import { useRouter } from "next/navigation";
 import { categoryVinyl } from "@/lib/blog/categories";
 import { Cover } from "./Cover";
@@ -363,6 +364,7 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
                 event.preventDefault();
                 toggleDeck();
               }} />
+            <HiddenAdminEntry />
           </svg>
         </div>
 

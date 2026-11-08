@@ -1,5 +1,7 @@
 "use client";
 
+import { resumeFiles } from "@/data/resume";
+
 interface ResumeProps {
   onClose: () => void;
 }
@@ -11,7 +13,7 @@ export default function Resume({ onClose }: ResumeProps) {
         <h2 className="text-white font-mono">Resume Preview</h2>
         <div className="flex gap-3">
           <a
-            href="/resume/goganghyun_resume.pdf"
+            href={resumeFiles.ko.href}
             target="_blank"
             rel="noreferrer"
             className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-mono text-sm transition-colors"
@@ -29,7 +31,7 @@ export default function Resume({ onClose }: ResumeProps) {
 
       <iframe
         title="Resume Preview"
-        src="/resume/ably-backend-resume.html"
+        src={`${resumeFiles.ko.href}#view=FitH&navpanes=0`}
         className="flex-1 w-full border-0 bg-white"
       />
     </div>

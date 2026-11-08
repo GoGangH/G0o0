@@ -48,7 +48,7 @@ export function SiteHeader() {
       <nav aria-label="주 메뉴" className="nav-links">
         {navItems.map((item) => <Link key={item.href} href={item.href} className="nav-link" aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</Link>)}
         <span className="nav-divider" aria-hidden="true" />
-        <a href="/resume/goganghyun_resume.pdf" target="_blank" rel="noreferrer" className="nav-link">이력서 <span aria-hidden="true" className="nav-arrow">↗</span></a>
+        <Link href="/resume" className="nav-link">이력서</Link>
       </nav>
 
       <div className="nav-actions">
@@ -61,7 +61,7 @@ export function SiteHeader() {
 
     {menuOpen && <nav id="mobile-menu" aria-label="모바일 메뉴" className="nav-mobile">
       {navItems.map((item) => <Link key={item.href} href={item.href} className="nav-mobile-link" aria-current={isCurrent(item.href) ? "page" : undefined} onClick={() => setMenuOpen(false)}>{item.label}</Link>)}
-      <a href="/resume/goganghyun_resume.pdf" target="_blank" rel="noreferrer" className="nav-mobile-link">이력서 <span aria-hidden="true" className="nav-arrow">↗</span></a>
+      <Link href="/resume" className="nav-mobile-link" onClick={() => setMenuOpen(false)}>이력서</Link>
     </nav>}
   </header>;
 }

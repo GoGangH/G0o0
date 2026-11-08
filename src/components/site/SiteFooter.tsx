@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { profile } from "@/data/profile";
+import { resumeFiles } from "@/data/resume";
 import { categories } from "@/lib/blog/categories";
 
 const siteLinks = [
@@ -12,7 +13,8 @@ const siteLinks = [
 const outLinks = [
   { label: "GitHub", href: profile.github },
   { label: "LinkedIn", href: profile.linkedin },
-  { label: "이력서 PDF", href: "/resume/goganghyun_resume.pdf" },
+  { label: "이력서 PDF", href: resumeFiles.ko.href },
+  { label: "Resume (EN)", href: resumeFiles.en.href },
 ];
 
 export function SiteFooter() {

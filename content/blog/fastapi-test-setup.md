@@ -1,4 +1,7 @@
 ---
+album: logit
+track: 3
+side: "A"
 title: "외부 API에 기대지 않고 테스트 59개를 돌리기"
 date: "2026-11-02"
 category: "testing"

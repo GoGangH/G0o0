@@ -1,4 +1,7 @@
 ---
+album: logit
+track: 1
+side: "A"
 title: "RAG 추천에서 문항, 직무, 회사 맥락을 함께 점수화하기"
 date: "2026-01-30"
 category: "ai-product"

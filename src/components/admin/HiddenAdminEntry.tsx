@@ -14,6 +14,13 @@ export function HiddenAdminEntry() {
   // After the password, the dialog asks for the code mailed to the owner.
   const [sentTo, setSentTo] = useState("");
   const credentials = useRef<{ id: string; password: string } | null>(null);
+  // Opened once per mount; a ref callback would reopen it whenever the deck re-renders mid-close.
+  useEffect(() => {
+    const node = dialog.current;
+    if (!open || !node || node.open) return;
+    node.showModal();
+    node.querySelector<HTMLInputElement>("input")?.focus();
+  }, [open]);
   useEffect(() => { if (sentTo) dialog.current?.querySelector<HTMLInputElement>("input[name=code]")?.focus(); }, [sentTo]);
   const router = useRouter();
   async function enter() {
@@ -43,7 +50,7 @@ export function HiddenAdminEntry() {
     <g transform={`matrix(${plateMatrix.join(" ")})`}>
       <circle cx="-220" cy="108" r="19" fill="transparent" style={{ pointerEvents: "all", cursor: "default" }} onClick={(event) => { event.stopPropagation(); void enter(); }} />
     </g>
-    {open && createPortal(<dialog ref={(node) => { dialog.current = node; if (node && !node.open) { node.showModal(); node.querySelector<HTMLInputElement>("input")?.focus(); } }} className="admin-modal" aria-labelledby="admin-login-title" onClose={() => setOpen(false)} onClick={(event) => { event.stopPropagation(); if (event.target === dialog.current) dialog.current?.close(); }}>
+    {open && createPortal(<dialog ref={dialog} onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); dialog.current?.close(); } }} className="admin-modal" aria-labelledby="admin-login-title" onClose={() => setOpen(false)} onClick={(event) => { event.stopPropagation(); if (event.target === dialog.current) dialog.current?.close(); }}>
       {!sentTo ? <form key="password" onSubmit={async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);

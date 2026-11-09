@@ -1,11 +1,13 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import matter from "gray-matter";
-import { categories, type CategoryKey } from "./categories";
+import { type CategoryKey } from "./categories";
+
+import { parseMarkdown } from "../admin/serialize";
+import { getAlbumDefinitions } from "./album-files";
+import { validateMembership } from "./album-schema";
 
 const CONTENT_DIR = join(process.cwd(), "content/blog");
-const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-const DATE = /^\d{4}-\d{2}-\d{2}$/;
+
 // Korean prose reads at roughly this many characters a minute.
 const CHARS_PER_MINUTE = 500;
 
@@ -19,21 +21,23 @@ export type PostMeta = {
   draft: boolean;
   readTime: number;
   cover?: string;
+  album?: string;
+  track?: number;
+  side?: string;
 };
 export type Post = PostMeta & { body: string };
 
 function parsePost(file: string): Post {
   const slug = file.replace(/\.md$/, "");
   const fail = (reason: string) => new Error(`content/blog/${file}: ${reason}`);
-  if (!SLUG.test(slug)) throw fail("file name must be lowercase letters, digits and hyphens");
-  if (slug === "albums" || slug === "category" || slug === "tag") throw fail("this file name is taken by a blog page");
-  const { data, content } = matter(readFileSync(join(CONTENT_DIR, file), "utf8"));
-  for (const field of ["title", "summary"]) {
-    if (typeof data[field] !== "string" || !data[field]) throw fail(`${field} is required`);
-  }
-  if (typeof data.date !== "string" || !DATE.test(data.date)) throw fail('date must be a quoted "YYYY-MM-DD"');
-  if (!categories.some((category) => category.key === data.category)) throw fail(`unknown category "${data.category}"`);
+  let data;
+  try {
+    data = parseMarkdown(slug, readFileSync(join(CONTENT_DIR, file), "utf8"));
+    validateMembership(data, getAlbumDefinitions());
+  } catch (error) { throw fail((error as Error).message); }
+  const content = data.body;
   return {
+    album: data.album, track: data.track, side: data.side,
     slug,
     title: data.title,
     date: data.date,

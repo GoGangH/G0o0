@@ -52,7 +52,7 @@
 .rt-desc { margin-top: 8px; font-size: 16px; color: #b4b9c0; }
 .rt-hint-top { font-size: 13px; color: #858a92; }
 
-.rt-frame { position: relative; width: 100%; margin-top: 8px; transition: height .4s cubic-bezier(.3, .8, .3, 1); }
+.rt-frame { position: relative; width: 100%; margin-top: 8px; }
 .rt-stage { position: absolute; top: 0; left: 50%; transform-origin: top center; }
 
 .rt-art { position: absolute; top: 0; left: 0; width: 660px; height: 540px; transform-origin: 0 0; }
@@ -202,3 +202,80 @@
 .rt-pager button:hover:not(:disabled), .rt-sound:hover { background: rgb(255 255 255 / 20%); }
 .rt-pager a { margin-left: 8px; padding: 6px 13px; border-radius: 99px; background: rgb(255 255 255 / 10%); }
 .rt-pager a:hover { background: rgb(255 255 255 / 20%); color: #fff; }
+
+/* Steel cube storage; only the records move. */
+.rt-cover-image { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.rs-collection { position: absolute; left: 652px; top: 8px; width: 450px; z-index: 2; transition: opacity .3s; }
+.rs-collection[data-dimmed] { opacity: .12; pointer-events: none; }
+.rs-ledge { display: flex; gap: 20px; align-items: center; height: 84px; padding: 0 16px 14px; border-bottom: 5px solid #555b63; box-shadow: 0 5px 0 #16181b, 0 12px 18px #0008; }
+.rs-display { position: relative; display: block; width: 64px; height: 64px; flex: none; transform: rotate(-4deg); box-shadow: 4px 5px 9px #0009; transition: transform .3s; cursor: pointer; }
+.rs-display:hover, .rs-display:focus-visible { transform: translateY(-6px) rotate(-2deg); }
+.rs-display:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+.rs-display .rt-cover-title { font-size: 12px; left: 5px; bottom: 5px; }
+.rs-display .rt-cover-kind { display: none; }
+.rs-eyebrow { font-size: 9px; color: #9ba9b3; letter-spacing: .16em; }
+.rs-ledge h2 { font-size: 20px; font-weight: 800; margin-top: 2px; }
+.rs-ledge p, .rs-ledge a { font-size: 11px; color: #aeb6bf; }
+.rs-ledge a { display: block; margin-top: 3px; }
+.rs-scroll-hint { display: none; }
+.rs-cubes:focus-visible { outline: 2px solid #e2e7eb; outline-offset: 4px; }
+.rs-cubes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; padding: 9px 7px 7px; background: linear-gradient(125deg, #5b6067, #24272d 18%, #444950 53%, #171a1f); box-shadow: 10px 12px 0 #08090c, 14px 20px 32px #0008; border: 1px solid #6d747b; }
+.rs-cube { min-width: 0; height: 140px; position: relative; background: linear-gradient(145deg, #07090b, #171b20); box-shadow: inset 5px 6px 12px #000, inset -1px -1px 0 #545a62; }
+/* A thin first card with its tab above all the sleeves, including on hover. */
+.rs-divider { position: relative; flex: 0 0 5px; height: 119px; border-radius: 2px 0 0; background: linear-gradient(90deg, #dce2e7, #7d8993); box-shadow: 2px 2px 4px #0008; }
+.rs-divider-tab { position: absolute; top: 0; left: 0; width: auto; min-width: 84px; height: 24px; padding: 2px 8px 2px 6px; white-space: nowrap; background: linear-gradient(120deg, #dce2e7, #a5afb8); color: #151a20; border-radius: 3px 3px 2px 0; }
+.rs-divider small { display: block; font-size: 7px; font-weight: 650; letter-spacing: .12em; line-height: 1.1; }
+.rs-divider h3 { font-size: 11px; font-weight: 800; line-height: 1.3; white-space: nowrap; }
+.rs-records { display: flex; align-items: flex-end; position: absolute; bottom: 11px; left: 8px; right: 8px; gap: 3px; perspective: 700px; }
+.rs-spine { flex: 0 1 var(--spine-width); min-width: 23px; width: var(--spine-width); height: var(--spine-height); position: relative; display: flex; flex-direction: column; align-items: center; padding: 5px 2px 4px; border-radius: 3px 3px 2px 2px; color: var(--spine-ink); background: linear-gradient(90deg, #fff4, transparent 18%, #0001 65%, #0007), var(--spine-bg); border-top: 2px solid #ffffff85; border-left: 1px solid #ffffff38; border-right: 2px solid #0007; box-shadow: 2px 1px 4px #000b, inset 1px 0 1px #ffffff20; transform: rotate(var(--lean)); transform-origin: center bottom; transition: transform .28s cubic-bezier(.2,.8,.2,1); text-decoration: none; cursor: pointer; }
+.rs-spine:hover, .rs-spine:focus-visible { transform: translate3d(0,-5px,12px) rotate(-2deg) rotateX(-12deg) rotateY(-10deg); z-index: 1; }
+.rs-spine:focus-visible { outline: 2px solid #e2e7eb; outline-offset: 2px; }
+.rs-spine strong { writing-mode: vertical-rl; text-orientation: sideways; font-size: 10.5px; font-weight: 800; line-height: 1.15; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 0; flex: 1; margin-block: auto; letter-spacing: -.025em; }
+.rs-spine-catalog { flex: none; max-width: 100%; overflow: hidden; font-size: 5px; font-weight: 700; letter-spacing: -.04em; margin-bottom: 4px; white-space: nowrap; }
+.rs-spine-kind { flex: none; font-size: 6px; line-height: 1.2; font-weight: 800; margin-top: 4px; padding: 2px 1px 0; border-top: 1px solid currentColor; }
+.rs-bookend { flex: 0 0 5px; height: 45px; border-left: 2px solid #848e98; border-bottom: 2px solid #848e98; transform: skew(-5deg); opacity: .5; margin-left: 2px; }
+.rs-vacant { color: #65707b; font-size: 9px; margin-bottom: 28px; line-height: 1.8; }
+.rs-vacant span { display: block; font-size: 20px; color: #434e59; }
+.rs-cube-number { position: absolute; bottom: 3px; right: 8px; font: 6px monospace; letter-spacing: .1em; color: #8b949c; }
+@media (max-width: 899px) {
+  .rs-collection { left: 15px; top: 354px; width: 400px; }
+  .rs-ledge { height: 100px; gap: 22px; }
+  .rs-display { width: 82px; height: 82px; }
+  .rs-ledge h2 { font-size: 24px; }
+  .rs-ledge p, .rs-ledge a { font-size: 12px; }
+  .rs-scroll-hint { display: flex; justify-content: space-between; padding: 9px 3px 6px; color: #b2bdc7; font-size: 12px; }
+  .rs-cubes { display: flex; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: 8px; padding: 8px; gap: 8px; scrollbar-width: thin; scrollbar-color: #87939f #252a31; }
+  .rs-cube { flex: 0 0 240px; height: 206px; scroll-snap-align: start; }
+  .rs-records { left: 12px; right: 12px; bottom: 15px; gap: 5px; }
+  .rs-divider { height: 183px; flex-basis: 6px; }
+  .rs-divider-tab { width: 210px; height: 36px; padding: 4px 8px; }
+  .rs-divider small { font-size: 9px; }
+  .rs-spine { height: calc(var(--spine-height) + 52px); flex-shrink: 0; }
+  .rs-spine strong { font-size: 15px; }
+  .rs-spine-catalog { font-size: 6px; }
+  .rs-spine-kind { font-size: 7px; }
+  .rs-divider h3 { font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rs-spine, .rs-display, .rs-collection { transition: none; }
+  .rt-frame { transition: none; }
+}
+.collection-section { margin: 40px 0 60px; border-top: 1px solid #343940; padding-top: 24px; }
+.album-detail .album-hero { margin-top: 32px; }
+.album-detail-content { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 64px; margin-top: 45px; }
+.album-side { margin-bottom: 30px; }
+.album-side ol { padding: 0; list-style: none; }
+.album-side li a { display: flex; gap: 18px; align-items: center; padding: 22px 0; border-bottom: 1px solid #343940; }
+.album-side li span { font: 12px monospace; color: #8c98a5; }
+.album-side li strong { flex: 1; font-size: 16px; }
+.album-side li small, .album-soon { color: #8c98a5; font-size: 13px; }
+.album-soon { padding: 24px 0; }
+.album-liner-description { margin: 20px 0; color: #adb7c3; line-height: 1.9; }
+.album-context { padding-block: 28px; border-bottom: 1px solid #343940; }
+.album-context-title { font-size: 14px; font-weight: 750; }
+.album-context ol { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; list-style: none; padding: 0; }
+.album-context li { min-width: 0; }
+.album-context li a { display: flex; gap: 10px; padding: 12px 15px; border: 1px solid #343940; border-radius: 5px; font-size: 12px; color: #a8b3bf; }
+.album-context a[aria-current] { color: #f4f6f9; background: #ffffff13; border-color: #8997a4; }
+.album-context li span { color: #8193a4; font: 10px monospace; }
+@media (max-width: 899px) { .album-detail-content { grid-template-columns: minmax(0,1fr); gap: 24px; } .album-context ol { flex-direction: column; } }

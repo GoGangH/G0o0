@@ -1,4 +1,7 @@
 ---
+album: logit
+track: 2
+side: "A"
 title: "사용자가 쓰던 AI 안으로 서비스를 들여보내기"
 date: "2026-11-02"
 category: "ai-product"

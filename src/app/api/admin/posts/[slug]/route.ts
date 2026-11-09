@@ -1,6 +1,7 @@
 import { AdminError, authorize, failure } from "@/lib/admin/http";
-import { github, postPath, readPost } from "@/lib/admin/github";
+import { github, postPath, readPost, listAlbums } from "@/lib/admin/github";
 import { serializePost, validatePost } from "@/lib/admin/serialize";
+import { validateMembership } from "@/lib/blog/album-schema";
 import { renderPost } from "@/lib/blog/render";
 type Context = { params: Promise<{ slug: string }> };
 export async function GET(_request: Request, { params }: Context) {
@@ -12,6 +13,7 @@ export async function PUT(request: Request, { params }: Context) {
     const slug = (await params).slug;
     const post = validatePost(await request.json());
     if (post.slug !== slug) throw new AdminError("슬러그가 일치하지 않습니다");
+    validateMembership(post, await listAlbums());
     await renderPost(post.body);
     // Never fetch a fresh SHA here: it would silently overwrite concurrent edits.
     const result = await github(postPath(slug), "PUT", { message: `${post.draft ? "Save draft" : "Publish post"}: ${post.title}`, content: Buffer.from(serializePost(post), "utf8").toString("base64"), ...(post.sha ? { sha: post.sha } : {}) });

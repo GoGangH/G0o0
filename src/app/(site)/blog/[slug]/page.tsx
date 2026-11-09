@@ -10,6 +10,7 @@ import { Cover } from "@/components/records/Cover";
 import { profile } from "@/data/profile";
 import { categoryLabel } from "@/lib/blog/categories";
 import { getNeighbors, getPost, getPosts, type PostMeta } from "@/lib/blog/posts";
+import { getAlbum } from "@/lib/blog/albums";
 import { renderPost } from "@/lib/blog/render";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -41,7 +42,9 @@ export default async function PostPage({ params }: Props) {
   const post = getPost(slug);
   if (!post) notFound();
   const { html, toc } = await renderPost(post.body);
-  const { newer, older } = getNeighbors(slug);
+  const album = post.album ? getAlbum(post.album) : undefined;
+  const at = album?.tracks.findIndex((track) => track.slug === slug) ?? -1;
+  const { newer, older } = album ? { older: album.tracks[at - 1], newer: album.tracks[at + 1] } : getNeighbors(slug);
   const albumLabel = categoryLabel(post.category);
 
   return <article className="blog">
@@ -66,6 +69,7 @@ export default async function PostPage({ params }: Props) {
       </div>
     </header>
 
+    {album && <nav className="site-width album-context" aria-label="앨범 수록 트랙"><Link href={`/blog/album/${album.slug}`} className="album-context-title">앨범 · {album.title} ↗</Link><ol>{album.tracks.map((track) => <li key={track.slug}><Link href={`/blog/${track.slug}`} aria-current={track.slug === slug ? "page" : undefined}><span>{track.side ?? "A"}{track.track}</span>{track.title}</Link></li>)}</ol></nav>}
     <div className="site-width track-layout">
       <div className="min-w-0">
         {toc.length > 0 && <details className="mb-9 rounded-xl border border-rule px-5 py-4 lg:hidden">

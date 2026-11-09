@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Cover } from "@/components/records/Cover";
-import { getAlbums } from "@/lib/blog/albums";
+import { categories } from "@/lib/blog/categories";
 import { getTags, type PostMeta } from "@/lib/blog/posts";
 import { AuthorCard } from "./AuthorCard";
 import { TrackSearch } from "./TrackSearch";
@@ -11,7 +11,7 @@ export function BlogIndex({ title, kicker, posts, album, tag, shelf, compactTop 
   const tags = getTags();
   const topTags = tags.slice(0, TOP_TAGS);
   const moreTags = tags.slice(TOP_TAGS);
-  const current = getAlbums().find(({ key }) => key === album);
+  const current = categories.map((category) => ({ ...category, kind: "장르", count: posts.length })).find(({ key }) => key === album);
   return <div className="site-width blog-body" data-compact={compactTop ? "" : undefined}>
     {current
       ? <header className="album-hero">

@@ -4,13 +4,14 @@ import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties
 import Link from "next/link";
 import { HiddenAdminEntry } from "@/components/admin/HiddenAdminEntry";
 import { useRouter } from "next/navigation";
-import { categoryVinyl } from "@/lib/blog/categories";
+import { type AlbumData } from "@/lib/blog/album-schema";
+import { shelves } from "@/lib/blog/shelves";
 import { Cover } from "./Cover";
 import { playClick, playDrop, playFlip, playNeedle, playPull, setSoundEnabled, soundEnabled, startCrackle, stopCrackle } from "./sound";
 import "./records.css";
 
-type Track = { slug: string; title: string; date: string; readTime: number; summary: string };
-export type Album = { key: string; label: string; catalog: string; kind: string; count: number; tracks: Track[] };
+type Track = { slug: string; title: string; date: string; readTime: number; summary: string; side?: string; track?: number };
+export type Album = { key: string; label: string; catalog: string; kind: string; count: number; tracks: Track[]; shelf: string; bg: string; ink: string; vinyl: AlbumData["vinyl"]; cover: AlbumData["cover"]; description: string; single?: boolean };
 type Matrix = number[];
 type Playing = { track: Track; album: Album };
 type Flight = Playing & { phase: "start" | "pull" | "fly" };
@@ -20,15 +21,14 @@ const ARM_REST = 0, ARM_PLAY = 34;
 const PULL_MS = 280, FLY_MS = 480, NEEDLE_MS = 420;
 
 // Everything is placed in a fixed design size and the whole stage is scaled to fit.
-const PER_VIEW = 3;
 const LAYOUTS = {
   wide: {
-    w: 1120, h: 560, hOpen: 560, deck: { x: 2, y: 26, s: 0.94 }, pull: [-175, 0], nowPlaying: [44, 512], sound: [982, 526], shelf: { idle: [656, 300, 456], open: [692, 514, 250] },
+    w: 1120, h: 560, hOpen: 560, deck: { x: 2, y: 26, s: 0.94 }, pull: [-175, 0], nowPlaying: [44, 512], sound: [530, 512], shelf: { idle: [656, 300, 456], open: [692, 514, 250] },
     shelfRow: { x: 664, y: 149, s: 0.42, step: 154 }, pager: [664, 322],
     open: { x: 700, y: 34, s: 1 }, rest: { x: 700, y: 412, s: 0.28, step: 112 },
   },
   narrow: {
-    w: 430, h: 566, hOpen: 832, deck: { x: 24, y: 0, s: 0.58 }, pull: [0, -150], nowPlaying: [18, 306], sound: [18, 262], shelf: { idle: [6, 506, 418], open: [25, 818, 380] },
+    w: 430, h: 728, hOpen: 832, deck: { x: 24, y: 0, s: 0.58 }, pull: [0, -150], nowPlaying: [18, 306], sound: [18, 262], shelf: { idle: [6, 506, 418], open: [25, 818, 380] },
     shelfRow: { x: 16, y: 376, s: 0.36, step: 134 }, pager: [18, 524],
     open: { x: 35, y: 352, s: 1 }, rest: { x: 35, y: 732, s: 0.24, step: 96 },
   },
@@ -38,7 +38,7 @@ type LayoutName = keyof typeof LAYOUTS;
 // Grooves with a wider band between tracks, and a paper label with its small print running round the rim, like a pressed LP.
 function Vinyl({ album, side = "A" }: { album: Album; side?: string }) {
   const id = useId().replace(/[^a-zA-Z0-9]/g, "");
-  const { kind, base } = categoryVinyl(album.key);
+  const { kind, base } = album.vinyl;
   const count = album.tracks.length;
   const bands = Array.from({ length: Math.max(0, count - 1) }, (_, index) => 126 - ((index + 1) * 68) / count);
   return <svg viewBox="-132 -132 264 264" className="rt-vinyl" aria-hidden="true" data-album={album.key} data-pressing={kind}>
@@ -108,10 +108,8 @@ function StrobeRim() {
   </svg>;
 }
 
-const sidesOf = (tracks: Track[]) => {
-  const split = Math.ceil(tracks.length / 2);
-  return [{ name: "A", tracks: tracks.slice(0, split) }, { name: "B", tracks: tracks.slice(split) }].filter((side) => side.tracks.length > 0);
-};
+const sidesOf = (tracks: Track[]) => [...new Set(tracks.map((track) => track.side ?? "A"))].map((name) => ({ name, tracks: tracks.filter((track) => (track.side ?? "A") === name) }));
+const seedOf = (slug: string) => [...slug].reduce((seed, char) => seed + char.charCodeAt(0), 0);
 
 export function RecordDeck({ albums, title, description, platter, rim, arm, startHit, startKey, art }: { albums: Album[]; title: string; description: string; platter: Matrix; rim: Matrix; arm: Matrix; startHit: string; startKey: string; art: ReactNode }) {
   const router = useRouter();
@@ -122,7 +120,6 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
   const [layoutName, setLayoutName] = useState<LayoutName>("wide");
   const [scale, setScale] = useState<number | null>(null);
   const [open, setOpen] = useState<string | null>(null);
-  const [page, setPage] = useState(0);
   const [flight, setFlight] = useState<Flight | null>(null);
   // Nothing plays on arrival: the record sits still until someone presses start or picks a track.
   const [running, setRunning] = useState(false);
@@ -220,22 +217,7 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
     const { x, y, s } = layout.deck;
     return [matrix[0] * s, matrix[1] * s, matrix[2] * s, matrix[3] * s, matrix[4] * s + x, matrix[5] * s + y];
   };
-  const pages = Math.max(1, Math.ceil(albums.length / PER_VIEW));
-  const first = page * PER_VIEW;
-  const openIndex = albums.findIndex((item) => item.key === open);
-  // While one album is out, the next few wait small beside it.
-  const waiting = open ? Array.from({ length: Math.min(PER_VIEW, albums.length - 1) }, (_, at) => albums[(openIndex + 1 + at) % albums.length].key) : [];
-  const place = (index: number, album: Album) => {
-    if (open === album.key) return { ...layout.open, hidden: false };
-    const row = layout.shelfRow;
-    const shelved = { x: row.x + (index - first) * row.step, y: row.y, s: row.s };
-    const at = waiting.indexOf(album.key);
-    if (at >= 0) return { x: layout.rest.x + at * layout.rest.step, y: layout.rest.y, s: layout.rest.s, hidden: false };
-    return { ...shelved, hidden: Boolean(open) || index < first || index >= first + PER_VIEW };
-  };
-  // Records far from the current page aren't in the DOM at all; neighbours stay so they can slide in.
-  const isNear = (index: number, album: Album) => album.key === open || waiting.includes(album.key) || Math.abs(index - first) <= PER_VIEW * 2 - 1;
-
+  const place = (_index: number, album: Album) => ({ ...layout.open, hidden: open !== album.key });
   const toggleSound = () => {
     const next = !sound;
     setSoundEnabled(next);
@@ -372,10 +354,31 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
           {[0, 1, 2, 3, 4].map((index) => <svg key={index} viewBox="0 0 20 24" className="rt-fly-note" data-album={playing.album.key}><path d={NOTE} fill="currentColor" /></svg>)}
         </div>}
 
-        <div className="rt-shelf" aria-hidden="true" style={{ transform: `translate(${(open ? layout.shelf.open : layout.shelf.idle)[0]}px, ${(open ? layout.shelf.open : layout.shelf.idle)[1]}px)`, width: (open ? layout.shelf.open : layout.shelf.idle)[2] }} />
+        <div className="rs-collection" data-dimmed={open ? "" : undefined}>
+          <div className="rs-ledge">
+            {albums.find((album) => !album.single) && (() => {
+              const album = albums.find((item) => !item.single)!;
+              return <><button className="rs-display" onClick={() => openAlbum(album.key)} aria-label={`${album.label} 새 앨범 열기`}><Cover album={album.key} label={album.label} cover={album.cover} /></button><div><span className="rs-eyebrow">NEW ARRIVALS / 01</span><h2>{album.label}</h2><p>{album.kind} · {album.catalog}</p><Link href="/blog/albums">컬렉션 둘러보기 ↗</Link></div></>;
+            })()}
+          </div>
+          <p className="rs-scroll-hint">옆으로 넘겨 보기 <span aria-hidden="true">→</span></p>
+          <div className="rs-cubes" aria-label="레코드 수납장" tabIndex={0}>
+            {shelves.map((shelf, index) => {
+              const records = albums.filter((album) => album.shelf === shelf.key);
+              return <section className="rs-cube" key={shelf.key} aria-label={`${shelf.label} 칸`}>
+                <div className="rs-records"><div className="rs-divider"><div className="rs-divider-tab"><small>{shelf.kicker} / {String(index + 1).padStart(2, "0")}</small><h3>{shelf.label}</h3></div></div>{records.map((album, recordIndex) => {
+                  const style = { "--spine-bg": album.bg, "--spine-ink": album.ink, "--lean": `${(seedOf(album.key) % 5 - 2) * .45}deg`, "--spine-width": `${album.single ? 26 : Math.min(40, 30 + album.count * 2)}px`, "--spine-height": `${94 + seedOf(album.key) % 4}px` } as CSSProperties;
+                  const content = <><span className="rs-spine-catalog">{album.single ? `S·${String(recordIndex + 1).padStart(2, "0")}` : album.catalog}</span><strong>{album.label}</strong><span className="rs-spine-kind">{album.single ? "Single" : album.kind === "곧 발매" ? "SOON" : album.kind}</span></>;
+                  return album.single ? <Link key={album.key} className="rs-spine" style={style} href={`/blog/${album.tracks[0].slug}`} onClick={(event) => playTrack(event, album, album.tracks[0])} aria-label={`${album.label} 싱글 재생`}>{content}</Link> : <button key={album.key} className="rs-spine" style={style} onClick={() => openAlbum(album.key)} aria-label={`${album.label} 앨범 열기`} aria-expanded={open === album.key}>{content}</button>;
+                })}{!records.length && <span className="rs-vacant">다음 기록을 위한 자리<span>—</span></span>}<span className="rs-bookend" aria-hidden="true" /></div>
+                <span className="rs-cube-number">{records.length ? `${records.length} RECORDS` : "EMPTY"}</span>
+              </section>;
+            })}
+          </div>
+        </div>
 
         {albums.map((album, index) => {
-          if (!isNear(index, album)) return null;
+          if (open !== album.key) return null;
           const slot = place(index, album);
           const isOpen = open === album.key;
           return <div key={album.key} className="rt-album" data-open={isOpen ? "" : undefined} data-small={open && !isOpen ? "" : undefined} data-hidden={slot.hidden ? "" : undefined} {...(slot.hidden ? { inert: true } : {})} style={{ transform: `translate(${slot.x}px, ${slot.y}px) scale(${slot.s})`, zIndex: isOpen ? 5 : 3 }}>
@@ -383,7 +386,7 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
               <div className="rt-peek"><Vinyl album={album} /><div className="rt-disc-sheen" /></div>
               <div className="rt-flip" data-flipped={isOpen ? "" : undefined}>
                 <button type="button" className="rt-face rt-front" aria-expanded={isOpen} aria-label={`${album.label} 앨범, 트랙 ${album.count}개`} onClick={() => openAlbum(album.key)} {...(isOpen ? { inert: true } : {})}>
-                  <Cover album={album.key} label={album.label} kind={album.kind} />
+                  <Cover album={album.key} label={album.label} kind={album.kind} cover={album.cover} />
                 </button>
                 <div className="rt-face rt-back" data-album={album.key} {...(isOpen ? {} : { inert: true })}>
                   <div className="rt-sleeve-top">
@@ -394,7 +397,7 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
                   <div className="rt-sleeve-frame">
                     <h2 className="rt-sleeve-title">{album.label}</h2>
                     {album.tracks.length === 0
-                      ? <p className="rt-empty">아직 수록된 트랙이 없습니다.</p>
+                      ? <p className="rt-empty">곧 발매 · 첫 트랙을 준비하고 있어요.</p>
                       : <div className="rt-sides">{sidesOf(album.tracks).map((side) => <div key={side.name}>
                           <p className="rt-side">SIDE {side.name}</p>
                           <ol>{side.tracks.map((track, at) => <li key={track.slug}>
@@ -406,12 +409,12 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
                           </li>)}</ol>
                         </div>)}</div>}
                   </div>
-                  {album.tracks[0] && <p className="rt-notes"><strong>LINER NOTES</strong> {album.tracks[0].summary}</p>}
+                  <p className="rt-notes"><strong>LINER NOTES</strong> {album.description}</p>
                   <div className="rt-sleeve-foot">
                     <button type="button" className="rt-close" aria-label="앞면으로 뒤집기" title="앞면으로" onClick={closeAlbum}>
                       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.7M20 4v4.7h-4.7M20 12a8 8 0 0 1-13.7 5.6L4 15.3M4 20v-4.7h4.7" /></svg>
                     </button>
-                    <Link href={`/blog/category/${album.key}`} className="rt-sleeve-album">{album.count > album.tracks.length ? `트랙 ${album.count}개 전체 보기 →` : "앨범 페이지 →"}</Link>
+                    <Link href={`/blog/album/${album.key}`} className="rt-sleeve-album">{album.count > album.tracks.length ? `트랙 ${album.count}개 전체 보기 →` : "앨범 페이지 →"}</Link>
                   </div>
                   <span className="rt-wear" aria-hidden="true" />
                 </div>
@@ -420,14 +423,6 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
           </div>;
         })}
 
-        {!open && <div className="rt-pager" style={{ left: layout.pager[0], top: layout.pager[1] }}>
-          {pages > 1 && <>
-            <button type="button" aria-label="이전 앨범" disabled={page === 0} onClick={() => setPage(page - 1)}>‹</button>
-            <span className="rt-pager-count">{page + 1} / {pages}</span>
-            <button type="button" aria-label="다음 앨범" disabled={page >= pages - 1} onClick={() => setPage(page + 1)}>›</button>
-          </>}
-          <Link href="/blog/albums">모든 앨범 {albums.length}장 →</Link>
-        </div>}
         <button type="button" className="rt-sound" style={{ left: layout.sound[0], top: layout.sound[1] }} aria-pressed={sound} aria-label={sound ? "소리 끄기" : "소리 켜기"} onClick={toggleSound}>
           <svg aria-hidden="true" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" fill="currentColor" />
@@ -435,7 +430,7 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
           </svg>
           {sound ? "소리 켜짐" : "소리 꺼짐"}
         </button>
-        <div className="rt-now" style={{ left: layout.nowPlaying[0], top: layout.nowPlaying[1], maxWidth: Math.min(560, layout.w - layout.nowPlaying[0] * 2) }}>
+        <div className="rt-now" style={{ left: layout.nowPlaying[0], top: layout.nowPlaying[1], maxWidth: Math.min(layoutName === "wide" ? 470 : 560, layout.w - layout.nowPlaying[0] * 2) }}>
           <button type="button" className="rt-play" aria-pressed={running} disabled={!playing} onClick={toggleDeck}>
             <svg aria-hidden="true" viewBox="0 0 16 16" width="12" height="12" fill="currentColor">{running ? <path d="M3 2h4v12H3zM9 2h4v12H9z" /> : <path d="M4 2l10 6-10 6z" />}</svg>
             {running ? "정지" : "재생"}

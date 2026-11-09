@@ -33,13 +33,13 @@ const motifs: Record<CoverMotif, React.ReactNode> = {
   wave: Array.from({ length: 12 }, (_, i) => <ellipse key={i} cx={232 + i} cy={104 - i * 0.6} rx={16 + i * 16.5} ry={13 + i * 15.5} fill="none" stroke="currentColor" strokeWidth={i % 3 === 0 ? 3.4 : 1.6} />),
 };
 
-export function CoverArt({ album }: { album: string }) {
-  return <svg viewBox="0 0 360 360" className="rt-cover-art" aria-hidden="true">{motifs[categoryMotif(album)]}</svg>;
+export function CoverArt({ album, motif }: { album: string; motif?: CoverMotif }) {
+  return <svg viewBox="0 0 360 360" className="rt-cover-art" aria-hidden="true">{motifs[motif ?? categoryMotif(album)]}</svg>;
 }
 
-export function Cover({ album, label, kind }: { album: string; label?: string; kind?: string }) {
+export function Cover({ album, label, kind, cover }: { album: string; label?: string; kind?: string; cover?: { motif: CoverMotif } | { image: string } }) {
   return <span className="rt-cover" data-album={album}>
-    <CoverArt album={album} />
+    {cover && "image" in cover ? <span className="rt-cover-image" style={{ backgroundImage: `url(${JSON.stringify(cover.image)})` }} /> : <CoverArt album={album} motif={cover && "motif" in cover ? cover.motif : undefined} />}
     {kind && <span className="rt-cover-kind">{kind}</span>}
     {label && <span className="rt-cover-title">{label}</span>}
     <span className="rt-wear" aria-hidden="true" />

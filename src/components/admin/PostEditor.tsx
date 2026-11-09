@@ -3,6 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { AlbumEditor } from "./AlbumEditor";
+import type { AlbumData } from "@/lib/blog/album-schema";
+import { shelfLabel } from "@/lib/blog/shelves";
 import { categories } from "@/lib/blog/categories";
 import { validSlug, validatePost, type WorkingPost } from "@/lib/admin/validation";
 import type { EditorHandle } from "./MarkdownEditor";
@@ -20,6 +23,9 @@ const tools = [
 export function PostEditor({ slug }: { slug?: string }) {
   const router = useRouter();
   const [post, setPost] = useState<WorkingPost | null>(null);
+  const [albums, setAlbums] = useState<(AlbumData & { count?: number })[]>([]);
+  const [newAlbum, setNewAlbum] = useState(false);
+  const [albumError, setAlbumError] = useState("");
   const [slugs, setSlugs] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("저장 안 됨");
@@ -57,6 +63,7 @@ export function PostEditor({ slug }: { slug?: string }) {
     }
     void load(); return () => { active = false; };
   }, [slug, storageKey]);
+  useEffect(() => { adminApi<{ albums: AlbumData[] }>("/albums").then(({ albums }) => setAlbums(albums)).catch((error) => setAlbumError(error.message)); }, []);
   useEffect(() => () => { objectUrls.current.forEach(URL.revokeObjectURL); }, []);
   useEffect(() => {
     if (!dirty) return;
@@ -87,6 +94,11 @@ export function PostEditor({ slug }: { slug?: string }) {
     return () => { clearTimeout(timer); controller.abort(); };
   }, [body, images]);
   function update(patch: Partial<WorkingPost>) { setPost((previous) => previous ? { ...previous, ...patch } : previous); setStatus("저장 안 됨"); }
+  function chooseAlbum(value: string, source = albums) {
+    if (value === "__new") { setNewAlbum(true); return; }
+    const album = source.find((item) => item.slug === value);
+    update({ album: value || undefined, track: album ? (album.count ?? 0) + 1 : undefined, side: album ? (album.sides ?? ["A", "B"])[0] : undefined });
+  }
   async function save(draft: boolean) {
     const working = current.current;
     if (!working || saving.current || uploads) return;
@@ -133,7 +145,7 @@ export function PostEditor({ slug }: { slug?: string }) {
   const count = post.body.replace(/\s/g, "").length;
   const duplicate = !slug && slugs.includes(post.slug);
   return <main className="admin-editor" onKeyDownCapture={(event) => {
-    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") { event.preventDefault(); event.stopPropagation(); void save(true); }
+    if (!newAlbum && (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") { event.preventDefault(); event.stopPropagation(); void save(true); }
   }}>
     <div className="admin-topbar"><Link href="/admin" onClick={(event) => { if (dirty && !window.confirm("GitHub에 저장하지 않은 변경이 있어요. 목록으로 이동할까요?")) event.preventDefault(); }}>← 글 목록</Link><span role="status" className="admin-save-status">{status}</span><div className="admin-actions"><button disabled={busy || uploads > 0} onClick={() => void save(true)}>초안 저장 <kbd>⌘S</kbd></button><button className="admin-primary" disabled={busy || uploads > 0} onClick={() => void save(false)}>게시</button></div></div>
     {error && <p role="alert" className="admin-error">{error}</p>}
@@ -145,13 +157,22 @@ export function PostEditor({ slug }: { slug?: string }) {
     <details className="admin-metadata" open={!slug}><summary>글 정보 <span>{categories.find((item) => item.key === post.category)?.label} · {post.date} · {post.tags.length ? post.tags.map((value) => `#${value}`).join(" ") : "태그 없음"} · /blog/{post.slug}</span></summary><div className="admin-fields">
       <label>슬러그<input value={post.slug} disabled={Boolean(slug) || busy || uploads > 0} aria-invalid={!validSlug(post.slug) || duplicate} onChange={(event) => { setSlugEdited(true); update({ slug: event.target.value }); }} /><small>{slug ? "기존 글의 주소는 고정됩니다." : duplicate ? "이미 사용 중인 슬러그입니다" : "영문 소문자, 숫자, 하이픈으로 주소를 정하세요."}</small></label>
       <label>날짜<input type="date" value={post.date} onChange={(event) => update({ date: event.target.value })} /></label>
-      <label>앨범<select value={post.category} onChange={(event) => update({ category: event.target.value as WorkingPost["category"] })}>{categories.map((category) => <option key={category.key} value={category.key}>{category.label}</option>)}</select></label>
+      <label>분류<select value={post.category} onChange={(event) => update({ category: event.target.value as WorkingPost["category"] })}>{categories.map((category) => <option key={category.key} value={category.key}>{category.label}</option>)}</select></label>
+      <label>앨범<select disabled={busy} value={post.album ?? ""} onChange={(event) => chooseAlbum(event.target.value)}><option value="">싱글 (앨범 없음)</option>{post.album && !albums.some((album) => album.slug === post.album) && <option value={post.album}>{post.album}</option>}{albums.map((album) => <option key={album.slug} value={album.slug}>{album.title} · {shelfLabel(album.shelf)}</option>)}<option value="__new">＋ 새 앨범 만들기</option></select>{albumError && <small role="alert">{albumError}</small>}</label>
+      {post.album && <><label>트랙 번호<input type="number" min={1} max={999} step={1} value={post.track ?? ""} onChange={(event) => update({ track: event.target.value ? Number(event.target.value) : undefined })} /></label><label>Side<select value={post.side ?? "A"} onChange={(event) => update({ side: event.target.value })}>{(albums.find((album) => album.slug === post.album)?.sides ?? ["A", "B"]).map((side) => <option key={side}>{side}</option>)}</select></label></>}
       <label>태그<div className="admin-tags">{post.tags.map((value) => <button key={value} onClick={() => update({ tags: post.tags.filter((item) => item !== value) })} aria-label={`${value} 태그 삭제`}>#{value} ×</button>)}<input value={tag} onChange={(event) => setTag(event.target.value)} onBlur={addTag} onKeyDown={(event) => { if (["Enter", ","].includes(event.key)) { event.preventDefault(); addTag(); } }} placeholder="태그 입력 후 Enter" /></div></label>
       <label className="admin-field-wide">표지 이미지 (선택)<input value={post.cover ?? ""} onChange={(event) => update({ cover: event.target.value })} placeholder="https://… 또는 /blog/…" /></label>
     </div></details>
     <div className="admin-toolbar" role="toolbar" aria-label="마크다운 도구">{tools.map(([label, name, before, after]) => <button key={name} type="button" title={name} aria-label={name} data-tool={label} onClick={() => editor.current?.insert(before, after)}>{label}</button>)}<button type="button" title="이미지 올리기 (붙여넣기·끌어놓기도 돼요)" disabled={uploads > 0 || busy} onClick={() => fileInput.current?.click()}>이미지</button><input ref={fileInput} type="file" accept="image/png,image/jpeg,image/gif,image/webp,image/avif" multiple hidden onChange={(event) => { void upload(Array.from(event.target.files ?? [])); event.target.value = ""; }} />{uploads > 0 && <span role="status">업로드 중… {uploads}</span>}</div>
     <div className="admin-tabs"><button aria-pressed={tab === "write"} onClick={() => setTab("write")}>작성</button><button aria-pressed={tab === "preview"} onClick={() => setTab("preview")}>미리보기</button></div>
     <div className="admin-panes" data-tab={tab}><section className="admin-compose"><div className="admin-pane-label">MARKDOWN</div><MarkdownEditor ref={editor} value={post.body} onChange={(body) => update({ body })} onSave={() => void save(true)} onImages={(files) => void upload(files)} /></section><section className="admin-preview"><div className="admin-pane-label">LIVE PREVIEW</div><header data-album={post.category}><p className="admin-kicker">{categories.find((item) => item.key === post.category)?.label}</p><h1 className="track-hero-title">{post.title || "제목"}</h1><p className="track-hero-summary">{post.summary}</p><p className="admin-muted">{post.date} · {Math.max(1, Math.round(count / 500))}분 읽기</p></header>{previewError && <p className="admin-error" role="alert">{previewError}</p>}<div className="post-body" dangerouslySetInnerHTML={{ __html: html }} /></section></div>
+    {newAlbum && <AlbumEditor existingSlugs={albums.map((album) => album.slug)} onClose={() => setNewAlbum(false)} onSaved={async (saved) => {
+      setNewAlbum(false);
+      const next = [...albums.filter((album) => album.slug !== saved.slug), { ...saved, count: 0 }];
+      setAlbums(next); chooseAlbum(saved.slug, next);
+      try { setAlbums((await adminApi<{ albums: AlbumData[] }>("/albums")).albums); setAlbumError(""); }
+      catch (error) { setAlbumError((error as Error).message); }
+    }} />}
     <footer className="admin-editor-footer"><span>{count.toLocaleString()}자 · 약 {Math.max(1, Math.round(count / 500))}분 읽기</span><span>임시 저장은 이 기기에 보관됩니다 · 게시 후 1~2분 뒤 반영</span></footer>
   </main>;
 }

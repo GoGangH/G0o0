@@ -110,3 +110,40 @@
 .admin-modal .admin-otp { font-size: 26px; font-weight: 700; letter-spacing: .5em; text-align: center; font-variant-numeric: tabular-nums; }
 .admin-modal .admin-link-button { display: block; width: 100%; margin-top: 10px; border: 0; background: transparent; color: #a9c7ff; font-size: 13px; }
 .admin-modal .admin-link-button:hover { background: transparent; text-decoration: underline; }
+
+.admin-collection-tabs { display: flex; gap: 8px; margin: 24px 0; }
+.admin-collection-tabs button[aria-pressed="true"] { background: #dfe8f6; color: #171e29; }
+.admin-album-dialog { width: min(880px, calc(100vw - 32px)); }
+.admin-album-dialog fieldset { border: 0; padding: 0; min-width: 0; margin: 20px 0; }
+.admin-album-dialog .admin-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0; }
+.admin-album-dialog label { margin-top: 0; }
+.admin-album-dialog > .admin-actions, .admin-album-dialog fieldset > label { margin-top: 20px; }
+.admin-album-dialog textarea { width: 100%; background: #080a0f66; color: #eceef1; border: 1px solid #ffffff1e; border-radius: 8px; padding: 12px; resize: vertical; }
+.admin-album-dialog input[type="color"] { padding: 3px; height: 42px; cursor: pointer; }
+.admin-album-dialog .admin-actions { flex-wrap: wrap; }
+.admin-motifs { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; margin: 12px 0 20px; }
+.admin-motifs button { padding: 3px; overflow: hidden; }
+.admin-motifs button[aria-pressed="true"] { outline: 2px solid #a9c7ff; outline-offset: 2px; }
+.admin-album-dialog .rt-cover, .admin-album-thumb .rt-cover { display: block; position: relative; aspect-ratio: 1; overflow: hidden; color: var(--a-ink); background: var(--a-bg); }
+.admin-album-dialog .rt-cover-art, .admin-album-thumb .rt-cover-art { display: block; width: 100%; height: 100%; }
+.admin-album-dialog .rt-cover-image, .admin-album-thumb .rt-cover-image { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.admin-album-dialog .rt-cover-title { position: absolute; left: 7%; right: 7%; bottom: 7%; font-size: 20px; font-weight: 750; line-height: 1.2; overflow-wrap: anywhere; }
+.admin-album-preview { display: flex; gap: 12px; justify-content: center; margin: 24px 0; }
+.admin-cover-preview { width: min(260px, 70%); }
+.admin-spine-preview { display: flex; align-items: center; justify-content: space-between; gap: 14px; writing-mode: vertical-rl; padding: 12px 8px; max-height: 260px; color: var(--a-ink); background: var(--a-bg); border: 1px solid currentColor; font-size: 10px; overflow: hidden; }
+.admin-spine-preview strong { font-size: 14px; overflow: hidden; }
+.admin-album-group { margin-top: 28px; }
+.admin-album-group h3, .admin-track-order h3 { font-weight: 650; }
+.admin-album-group .admin-table-wrap { margin-top: 12px; }
+.admin-album-cell { display: flex; gap: 16px; align-items: center; }
+.admin-album-thumb { width: 52px; flex: 0 0 52px; }
+.admin-track-order { border: 1px solid #ffffff20; border-radius: 14px; padding: 20px; margin-top: 24px; }
+.admin-track-order li { display: flex; gap: 8px; align-items: center; margin: 12px 0; }
+.admin-track-order li > span { flex: 1; }
+.admin-track-order select { background: #11151e; color: #eceef1; border: 1px solid #ffffff30; border-radius: 8px; padding: 8px; }
+@media (max-width: 600px) {
+  .admin-album-dialog { padding: 20px; }
+  .admin-album-dialog .admin-fields { grid-template-columns: minmax(0, 1fr); }
+  .admin-motifs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .admin-track-order li { flex-wrap: wrap; }
+}

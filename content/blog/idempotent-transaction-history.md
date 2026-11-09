@@ -1,4 +1,7 @@
 ---
+album: solthumb
+track: 1
+side: "A"
 title: "같은 거래가 두 번 들어와도 이력이 망가지지 않게"
 date: "2026-11-02"
 category: "database"

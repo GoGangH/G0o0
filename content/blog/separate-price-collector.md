@@ -1,4 +1,7 @@
 ---
+album: solthumb
+track: 3
+side: "A"
 title: "가격 수집 서버를 API 서버에서 떼어낸 이유"
 date: "2026-11-02"
 category: "infrastructure"

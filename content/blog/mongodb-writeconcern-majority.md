@@ -1,4 +1,7 @@
 ---
+album: salt-hub
+track: 2
+side: "A"
 title: "MongoDB Atlas 복제 지연을 writeConcern majority로 줄인 기록"
 date: "2026-03-12"
 category: "database"

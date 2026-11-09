@@ -21,3 +21,21 @@ test("slug rules and reserved routes", () => {
 test("invalid metadata cannot be serialized", () => {
   for (const patch of [{ category: "unknown" }, { date: "2026-02-30" }, { date: "2026-1-01" }, { title: "" }, { summary: "" }, { tags: [1] }, { draft: "false" }, { sha: "oops" }]) assert.throws(() => validatePost({ ...post, ...patch }));
 });
+
+test("post album fields survive frontmatter roundtrip and disappear for singles", () => {
+  const track = { ...post, album: "test-album", track: 3, side: "B" };
+  const markdown = serializePost(track);
+  assert.match(markdown, /album: "test-album"\ntrack: 3\nside: "B"/);
+  assert.deepEqual(parseMarkdown(post.slug, markdown), { ...track, tags: ["typescript", "한글"], sha: undefined });
+  assert.doesNotMatch(serializePost(post), /^(album|track|side):/m);
+  assert.doesNotMatch(serializePost({ ...post, album: "test-album" }), /^(track|side):/m);
+  assert.doesNotMatch(serializePost({ ...track, album: undefined, track: undefined, side: undefined }), /^(album|track|side):/m);
+});
+
+test("post rejects invalid album, track and side fields", () => {
+  for (const patch of [{ album: "../bad" }, { album: "" }, { album: 1 }, { track: 1 }, { side: "A" },
+    { album: "test-album", track: 0 }, { album: "test-album", track: 1.5 }, { album: "test-album", track: 1000 },
+    { album: "test-album", track: "1" }, { album: "test-album", side: "AA" }, { album: "test-album", side: "a" }]) {
+    assert.throws(() => validatePost({ ...post, ...patch }));
+  }
+});

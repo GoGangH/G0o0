@@ -1,4 +1,7 @@
 ---
+album: salt-hub
+track: 1
+side: "A"
 title: "게임 점수를 매번 DB에 쓰지 않기로 한 이유"
 date: "2026-11-02"
 category: "backend"

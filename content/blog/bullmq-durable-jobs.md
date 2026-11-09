@@ -1,4 +1,7 @@
 ---
+album: solthumb
+track: 2
+side: "A"
 title: "BullMQ 영속 작업으로 온체인 거래 분석을 복구 가능하게 만들기"
 date: "2026-02-24"
 category: "backend"

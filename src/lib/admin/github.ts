@@ -36,3 +36,21 @@ export async function listPosts() {
   for (let at = 0; at < markdown.length; at += 5) posts.push(...await Promise.all(markdown.slice(at, at + 5).map((file) => readPost(file.name.slice(0, -3)))));
   return posts.sort((a, b) => b.date.localeCompare(a.date));
 }
+
+export async function listAlbums() {
+  const { parseAlbum } = await import("../blog/album-schema");
+  let files: FileEntry[];
+  try { files = await github("content/albums"); } catch (error) { if (error instanceof AdminError && error.status === 404) return []; throw error; }
+  if (!Array.isArray(files)) throw new AdminError("앨범 폴더를 읽을 수 없어요", 502);
+  const albums = [];
+  for (const file of files.filter((file) => file.type === "file" && file.name.endsWith(".md"))) {
+    const entry: FileEntry = await github(file.path);
+    if (entry.encoding !== "base64" || typeof entry.content !== "string") throw new AdminError("앨범 파일을 읽을 수 없어요", 502);
+    albums.push(parseAlbum(file.name.slice(0, -3), Buffer.from(entry.content, "base64").toString("utf8"), entry.sha));
+  }
+  return albums;
+}
+export function albumPath(slug: string) {
+  if (!validSlug(slug)) throw new AdminError("앨범 슬러그를 확인해 주세요");
+  return `content/albums/${slug}.md`;
+}

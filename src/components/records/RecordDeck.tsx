@@ -5,8 +5,8 @@ import Link from "next/link";
 import { HiddenAdminEntry } from "@/components/admin/HiddenAdminEntry";
 import { useRouter } from "next/navigation";
 import { type AlbumData } from "@/lib/blog/album-schema";
-import { shelves } from "@/lib/blog/shelves";
 import { Cover } from "./Cover";
+import { RecordCrate } from "./RecordCrate";
 import { playClick, playDrop, playFlip, playNeedle, playPull, setSoundEnabled, soundEnabled, startCrackle, stopCrackle } from "./sound";
 import "./records.css";
 
@@ -23,14 +23,12 @@ const PULL_MS = 280, FLY_MS = 480, NEEDLE_MS = 420;
 // Everything is placed in a fixed design size and the whole stage is scaled to fit.
 const LAYOUTS = {
   wide: {
-    w: 1120, h: 560, hOpen: 560, deck: { x: 2, y: 26, s: 0.94 }, pull: [-175, 0], nowPlaying: [44, 512], sound: [530, 512], shelf: { idle: [656, 300, 456], open: [692, 514, 250] },
-    shelfRow: { x: 664, y: 149, s: 0.42, step: 154 }, pager: [664, 322],
-    open: { x: 700, y: 34, s: 1 }, rest: { x: 700, y: 412, s: 0.28, step: 112 },
+    w: 1120, h: 560, hOpen: 560, deck: { x: 2, y: 26, s: 0.94 }, pull: [-175, 0], nowPlaying: [44, 512], sound: [530, 512],
+    open: { x: 700, y: 34, s: 1 },
   },
   narrow: {
-    w: 430, h: 728, hOpen: 832, deck: { x: 24, y: 0, s: 0.58 }, pull: [0, -150], nowPlaying: [18, 306], sound: [18, 262], shelf: { idle: [6, 506, 418], open: [25, 818, 380] },
-    shelfRow: { x: 16, y: 376, s: 0.36, step: 134 }, pager: [18, 524],
-    open: { x: 35, y: 352, s: 1 }, rest: { x: 35, y: 732, s: 0.24, step: 96 },
+    w: 430, h: 910, hOpen: 910, deck: { x: 24, y: 0, s: 0.58 }, pull: [0, -150], nowPlaying: [18, 306], sound: [18, 262],
+    open: { x: 35, y: 352, s: 1 },
   },
 };
 type LayoutName = keyof typeof LAYOUTS;
@@ -109,7 +107,6 @@ function StrobeRim() {
 }
 
 const sidesOf = (tracks: Track[]) => [...new Set(tracks.map((track) => track.side ?? "A"))].map((name) => ({ name, tracks: tracks.filter((track) => (track.side ?? "A") === name) }));
-const seedOf = (slug: string) => [...slug].reduce((seed, char) => seed + char.charCodeAt(0), 0);
 
 export function RecordDeck({ albums, title, description, platter, rim, arm, startHit, startKey, art }: { albums: Album[]; title: string; description: string; platter: Matrix; rim: Matrix; arm: Matrix; startHit: string; startKey: string; art: ReactNode }) {
   const router = useRouter();
@@ -354,28 +351,7 @@ export function RecordDeck({ albums, title, description, platter, rim, arm, star
           {[0, 1, 2, 3, 4].map((index) => <svg key={index} viewBox="0 0 20 24" className="rt-fly-note" data-album={playing.album.key}><path d={NOTE} fill="currentColor" /></svg>)}
         </div>}
 
-        <div className="rs-collection" data-dimmed={open ? "" : undefined}>
-          <div className="rs-ledge">
-            {albums.find((album) => !album.single) && (() => {
-              const album = albums.find((item) => !item.single)!;
-              return <><button className="rs-display" onClick={() => openAlbum(album.key)} aria-label={`${album.label} 새 앨범 열기`}><Cover album={album.key} label={album.label} cover={album.cover} /></button><div><span className="rs-eyebrow">NEW ARRIVALS / 01</span><h2>{album.label}</h2><p>{album.kind} · {album.catalog}</p><Link href="/blog/albums">컬렉션 둘러보기 ↗</Link></div></>;
-            })()}
-          </div>
-          <p className="rs-scroll-hint">옆으로 넘겨 보기 <span aria-hidden="true">→</span></p>
-          <div className="rs-cubes" aria-label="레코드 수납장" tabIndex={0}>
-            {shelves.map((shelf, index) => {
-              const records = albums.filter((album) => album.shelf === shelf.key);
-              return <section className="rs-cube" key={shelf.key} aria-label={`${shelf.label} 칸`}>
-                <div className="rs-records"><div className="rs-divider"><div className="rs-divider-tab"><small>{shelf.kicker} / {String(index + 1).padStart(2, "0")}</small><h3>{shelf.label}</h3></div></div>{records.map((album, recordIndex) => {
-                  const style = { "--spine-bg": album.bg, "--spine-ink": album.ink, "--lean": `${(seedOf(album.key) % 5 - 2) * .45}deg`, "--spine-width": `${album.single ? 26 : Math.min(40, 30 + album.count * 2)}px`, "--spine-height": `${94 + seedOf(album.key) % 4}px` } as CSSProperties;
-                  const content = <><span className="rs-spine-catalog">{album.single ? `S·${String(recordIndex + 1).padStart(2, "0")}` : album.catalog}</span><strong>{album.label}</strong><span className="rs-spine-kind">{album.single ? "Single" : album.kind === "곧 발매" ? "SOON" : album.kind}</span></>;
-                  return album.single ? <Link key={album.key} className="rs-spine" style={style} href={`/blog/${album.tracks[0].slug}`} onClick={(event) => playTrack(event, album, album.tracks[0])} aria-label={`${album.label} 싱글 재생`}>{content}</Link> : <button key={album.key} className="rs-spine" style={style} onClick={() => openAlbum(album.key)} aria-label={`${album.label} 앨범 열기`} aria-expanded={open === album.key}>{content}</button>;
-                })}{!records.length && <span className="rs-vacant">다음 기록을 위한 자리<span>—</span></span>}<span className="rs-bookend" aria-hidden="true" /></div>
-                <span className="rs-cube-number">{records.length ? `${records.length} RECORDS` : "EMPTY"}</span>
-              </section>;
-            })}
-          </div>
-        </div>
+        <RecordCrate albums={albums} narrow={layoutName === "narrow"} dimmed={Boolean(open)} onOpen={openAlbum} onPlaySingle={(event, album) => playTrack(event, album, album.tracks[0])} />
 
         {albums.map((album, index) => {
           if (open !== album.key) return null;
